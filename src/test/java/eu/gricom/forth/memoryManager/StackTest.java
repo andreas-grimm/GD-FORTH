@@ -1,0 +1,38 @@
+package eu.gricom.forth.memoryManager;
+
+import eu.gricom.forth.error.EmptyStackException;
+import eu.gricom.forth.variableTypes.IntegerValue;
+import eu.gricom.forth.variableTypes.StringValue;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class StackTest {
+
+    @Test
+    public void testStack() {
+        Stack oStack = new Stack();
+
+        oStack.push(new StringValue("TestValue"));
+        oStack.push(new IntegerValue(999));
+
+        try {
+            IntegerValue oResult = (IntegerValue) oStack.pop();
+            assertEquals(oResult.toInt(), 999);
+
+            StringValue strResult = (StringValue) oStack.pop();
+            assertTrue(strResult.toString().matches("TestValue"));
+        } catch (EmptyStackException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testStackWithException() {
+        Stack oStack = new Stack();
+
+        assertThrows(EmptyStackException.class, () -> {
+            oStack.pop();
+        });
+    }
+}

@@ -1,0 +1,185 @@
+package eu.gricom.forth.variableTypes;
+
+import eu.gricom.forth.error.DivideByZeroException;
+import eu.gricom.forth.error.SyntaxErrorException;
+import eu.gricom.forth.statements.Expression;
+
+/**
+ * Value.java
+ * <p>
+ * Description: The Value interface is the base type for all data values in the BASIC interpreter. It defines the
+ * contract for arithmetic operations, comparisons, and type conversions between different value types (string,
+ * integer, real, long, boolean). By extending Expression, values can also serve as literal expressions in the AST.
+ * <p>
+ * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway
+ */
+public interface Value extends Expression {
+
+    /**
+     * Value types override this to convert themselves to a string representation.
+     *
+     * @return the value as a string
+     */
+    String toString();
+
+    /**
+     * Value types override this to convert themselves to a numeric representation.
+     *
+     * @return the value as a double
+     */
+    double toReal();
+
+    /**
+     * Value types override this to convert themselves to a numeric representation.
+     *
+     * @return the value as a double
+     */
+    int toInteger();
+
+    /**
+     * Compares of one value object with another one. Returns true if equal.
+     *
+     * @param oValue second value for the comparison
+     * @return BooleanValue(true) if the objects are equal (not identical), BooleanValue(false) otherwise
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value equals(Value oValue) throws SyntaxErrorException;
+
+    /**
+     * Compares of one value object with another one. Returns true if not equal.
+     *
+     * @param oValue second value for the comparison
+     * @return BooleanValue(true) if the objects are equal (not identical), BooleanValue(false) otherwise
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value notEqual(Value oValue) throws SyntaxErrorException;
+
+    /**
+     * Addition of one value object with another one.
+     *
+     * @param oValue second value for the calculation
+     * @return the result of the addition
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value plus(Value oValue) throws SyntaxErrorException;
+
+    /**
+     * Substraction of one value object with another one.
+     *
+     * @param oValue subtractor for the calculation
+     * @return the result of the substraction
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value minus(Value oValue) throws SyntaxErrorException;
+
+    /**
+     * Multiplication of one value object with another one.
+     *
+     * @param oValue second factor for the calculation
+     * @return the result of the multiplication
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value multiply(Value oValue) throws SyntaxErrorException;
+
+    /**
+     * Division of one value object with another one.
+     *
+     * @param oValue divisor for the calculation
+     * @return the result of the division
+     * @throws DivideByZeroException thrown for a division by zero
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value divide(Value oValue) throws DivideByZeroException, SyntaxErrorException;
+
+    /**
+     * Remainder of an integer division.
+     *
+     * @param oValue divisor for the calculation
+     * @return the result of the division
+     * @throws DivideByZeroException thrown for a division by zero
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value modulo(Value oValue) throws DivideByZeroException, SyntaxErrorException;
+
+    /**
+     * Multiplication of one value object by 2, parameter times.
+     *
+     * @param oValue second factor for the calculation
+     * @return the result of the multiplication
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value shiftLeft(Value oValue) throws SyntaxErrorException;
+
+    /**
+     * Execution of the logical AND function.
+     *
+     * @param oValue second statement to compare
+     * @return the result of the function
+     * @throws SyntaxErrorException thrown when different or non-compatible types are used
+     */
+    Value and(Value oValue) throws DivideByZeroException, SyntaxErrorException;
+
+    /**
+     * Execution of the logical OR function.
+     *
+     * @param oValue second statement to compare
+     * @return the result of the function
+     * @throws SyntaxErrorException thrown when different or non-compatible types are used
+     */
+    Value or(Value oValue) throws DivideByZeroException, SyntaxErrorException;
+
+    /**
+     * Division of one value object by 2, parameter times.
+     *
+     * @param oValue divisor for the calculation
+     * @return the result of the division
+     * @throws DivideByZeroException thrown for a division by zero
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value shiftRight(Value oValue) throws DivideByZeroException, SyntaxErrorException;
+
+    /**
+     * Calcualte the power of one value object with another one.
+     *
+     * @param oValue divisor for the calculation
+     * @return the result of the divition
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value power(Value oValue) throws SyntaxErrorException;
+
+    /**
+     * smallerThan compares one value object with another one.
+     *
+     * @param oValue comparison value for function
+     * @return BooleanValue(true) if this object is smaller (not equal), BooleanValue(false) otherwise
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value smallerThan(Value oValue) throws SyntaxErrorException;
+
+    /**
+     * smallerEqualThan compares one value object with another one.
+     *
+     * @param oValue comparison value for function
+     * @return BooleanValue(true) if this object is smaller (not equal), BooleanValue(false) otherwise
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value smallerEqualThan(Value oValue) throws SyntaxErrorException;
+
+    /**
+     * largerThan of one value object with another one.
+     *
+     * @param oValue comparison value for function
+     * @return BooleanValue(true) if this object is larger (not equal), BooleanValue(false) otherwise
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value largerThan(Value oValue) throws SyntaxErrorException;
+
+    /**
+     * largerEqualThan of one value object with another one.
+     *
+     * @param oValue comparison value for function
+     * @return BooleanValue(true) if this object is larger (not equal), BooleanValue(false) otherwise
+     * @throws SyntaxErrorException thrown when different types are used
+     */
+    Value largerEqualThan(Value oValue) throws SyntaxErrorException;
+}

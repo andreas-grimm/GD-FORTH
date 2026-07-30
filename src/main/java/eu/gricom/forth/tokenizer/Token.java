@@ -1,0 +1,126 @@
+package eu.gricom.forth.tokenizer;
+
+import java.util.Objects;
+
+/**
+ * Token.java
+ * <p>
+ * Description: The Token class represents a single lexical unit produced by the Lexer during tokenisation. Each token
+ * contains the original source text, its type classification, the source line number, and its position in the command
+ * sequence for error reporting and navigation.
+ * <p>
+ * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway
+ */
+public final class Token {
+    private String _strText;
+    private final ForthTokenType _oType;
+    private final int _iLineNumber;
+    private final int _iCommandSequenceNumber;
+
+    /**
+     * Constructor of the Code Generator object.
+     * @param strText read text of the source code
+     * @param oType type of the token
+     * @param iLineNumber number of the line in the BASIC source code
+     */
+    public Token(final String strText, final ForthTokenType oType, final int iLineNumber) {
+        _strText = strText;
+        _oType = oType;
+        _iLineNumber = iLineNumber;
+        _iCommandSequenceNumber = 1; // this is the first command in the line
+    }
+
+    /**
+     * Constructor of the Code Generator object.
+     * @param strText read text of the source code
+     * @param oType type of the token
+     * @param iLineNumber number of the line in the BASIC source code
+     * @param iCommandSequenceNumber the number of the command in the source code line
+     */
+    public Token(final String strText,
+                 final ForthTokenType oType,
+                 final int iLineNumber,
+                 final int iCommandSequenceNumber) {
+        _strText = strText;
+        _oType = oType;
+        _iLineNumber = iLineNumber;
+        _iCommandSequenceNumber = iCommandSequenceNumber;
+    }
+
+    /**
+     * Get method for the TEXT attribute.
+     *
+     * @return Read text of the source code
+     */
+    public String getText() {
+        return _strText;
+    }
+
+    /**
+     * Get method for the TYPE attribute.
+     *
+     * @return Read type of the token found
+     */
+    public ForthTokenType getType() {
+        return _oType;
+    }
+
+    /**
+     * Get the line number of the BASIC command.
+     *
+     * @return BASIC line number
+     */
+    public int getLine() {
+        return _iLineNumber;
+    }
+
+    /**
+     * Get the sequence number of the command.
+     *
+     * @return sequence number of the command
+     */
+    public int getCommandSequence() {
+        return _iCommandSequenceNumber;
+    }
+
+    /**
+     * Get method for the TYPE attribute.
+     *
+     * @param strText set the content of the token
+     * @return Read type of the token found
+     */
+    public String setText(final String strText) {
+        _strText = strText;
+
+        return _strText;
+    }
+
+    /**
+     * Return the content of the Token object in json format.
+     *
+     * @return json Block
+     */
+    public String structure() {
+        String strReturn = "{\"TOKEN\": {";
+        strReturn += "\"LINE_NR\": \""+ _iLineNumber +"\",";
+        strReturn += "\"TYPE\": \""+ _oType.name() +"\",";
+        strReturn += "\"COMMAND_SEQUENCE_NUMBER\": \""+ _iCommandSequenceNumber +"\",";
+        strReturn += "\"TEXT\": \""+ _strText +"\"";
+        strReturn += "}}";
+
+        return strReturn;
+    }
+
+    /**
+     * Compare two Token objects
+     *
+     * @return boolean - true if Token identical
+     */
+    public boolean equals(Token oCompareToken) {
+        return (_oType == oCompareToken._oType) &&
+                (_iLineNumber == oCompareToken._iLineNumber) &&
+                (_iCommandSequenceNumber == oCompareToken._iCommandSequenceNumber) &&
+                (Objects.equals(_strText, oCompareToken._strText));
+    }
+}
+
