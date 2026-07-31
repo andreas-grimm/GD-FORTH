@@ -5,8 +5,8 @@ import eu.gricom.forth.error.SyntaxErrorException;
 /**
  * Normalizer.java
  * <p>
- * Description: The Normalizer class preprocesses BASIC source code lines before tokenisation. It standardises spacing
- * around operators and delimiters, handles array index notation, and ensures consistent formatting that the Lexer can
+ * Description: The Normalizer class preprocesses FORTH source code lines before tokenisation. It standardises spacing
+ * around operators and delimiters, handles stack notation, and ensures consistent formatting that the Lexer can
  * reliably parse.
  * <p>
  * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway

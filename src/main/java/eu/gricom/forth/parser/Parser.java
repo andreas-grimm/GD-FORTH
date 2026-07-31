@@ -9,7 +9,7 @@ import java.util.List;
  * Parser.java
  * <p>
  * Description: The Parser interface defines the contract for converting a sequence of tokens into an Abstract Syntax
- * Tree (AST). Implementations analyse the token stream, validate syntax according to BASIC grammar rules, and produce
+ * Tree (AST). Implementations analyse the token stream, validate syntax according to FORTH grammar rules, and produce
  * a list of executable Statement objects.
  * <p>
  * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway

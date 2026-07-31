@@ -13,11 +13,11 @@ import java.util.Locale;
 
 
 /**
- * Basic.java
+ * Forth.java
  * <p>
- * Description: The Basic class is the main entry point for the GD-BASIC interpreter. It orchestrates the
+ * Description: The Forth class is the main entry point for the GD-FORTH interpreter. It orchestrates the
  * complete execution pipeline including file loading, lexical analysis (tokenisation), parsing, and
- * interpretation of BASIC programs.
+ * interpretation of FORTH programs.
  * <p>
  * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway
  */

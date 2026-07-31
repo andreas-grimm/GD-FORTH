@@ -21,7 +21,7 @@ public final class Token {
      * Constructor of the Code Generator object.
      * @param strText read text of the source code
      * @param oType type of the token
-     * @param iLineNumber number of the line in the BASIC source code
+     * @param iLineNumber number of the line in the FORTH source code
      */
     public Token(final String strText, final ForthTokenType oType, final int iLineNumber) {
         _strText = strText;
@@ -34,7 +34,7 @@ public final class Token {
      * Constructor of the Code Generator object.
      * @param strText read text of the source code
      * @param oType type of the token
-     * @param iLineNumber number of the line in the BASIC source code
+     * @param iLineNumber number of the line in the FORTH source code
      * @param iCommandSequenceNumber the number of the command in the source code line
      */
     public Token(final String strText,
@@ -66,9 +66,9 @@ public final class Token {
     }
 
     /**
-     * Get the line number of the BASIC command.
+     * Get the line number of the FORTH command.
      *
-     * @return BASIC line number
+     * @return FORTH line number
      */
     public int getLine() {
         return _iLineNumber;

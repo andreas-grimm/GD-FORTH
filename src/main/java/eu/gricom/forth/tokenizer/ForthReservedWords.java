@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 /**
  * ForthReservedWords.java
  * <p>
- * Description: The ForthReservedWords class maintains the dictionary of all BASIC language keywords and their corresponding
+ * Description: The ForthReservedWords class maintains the dictionary of all FORTH language keywords and their corresponding
  * token types. During lexical analysis, the lexer uses this class to identify whether a word is a reserved keyword
- * (such as PRINT, GOTO, IF) or a user-defined identifier.
+ * (such as DUP, DROP, SWAP) or a user-defined identifier.
  * <p>
  * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway
  */
@@ -20,7 +20,7 @@ public final class ForthReservedWords {
     private ForthReservedWords() { }
 
     /**
-     * This defines the different kinds of tokens for the Dartmouth BASIC styles.
+     * This defines the different kinds of tokens for the FORTH language standard.
      */
     private final static String[] _astrReservedWords = {
             "!",
@@ -41,7 +41,7 @@ public final class ForthReservedWords {
             ":", ":NONAME",
             ";", ";CODE",
             "<", "<#", "<>", "=",
-            ">",
+            ">", "<=", ">=",
             ">BODY", ">FLOAT", ">IN", ">NUMBER", ">R",
             "?", "?DO", "?DUP", "@",
             "ABORT", "ABORT\"", "ABS", "ACCEPT", "ACTION-OF",
@@ -155,7 +155,7 @@ public final class ForthReservedWords {
             ForthTokenType.COLON, ForthTokenType.COLON_NO_NAME,
             ForthTokenType.SEMICOLON, ForthTokenType.SEMICOLON_CODE,
             ForthTokenType.LESS_THAN, ForthTokenType.LESS_NUMBER_SIGN, ForthTokenType.NOT_EQUALS, ForthTokenType.EQUALS,
-              ForthTokenType.GREATER_THAN,
+              ForthTokenType.GREATER_THAN, ForthTokenType.LESS_EQUAL, ForthTokenType.GREATER_EQUAL,
             ForthTokenType.TO_BODY, ForthTokenType.TO_FLOAT, ForthTokenType.TO_IN, ForthTokenType.TO_NUMBER, ForthTokenType.TO_R,
             ForthTokenType.QUESTION, ForthTokenType.QUESTION_DO, ForthTokenType.QUESTION_DUPE, ForthTokenType.FETCH,
             ForthTokenType.ABORT, ForthTokenType.ABORT_QUOTE, ForthTokenType.ABS, ForthTokenType.ACCEPT, ForthTokenType.ACTION_OF,

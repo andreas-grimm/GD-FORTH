@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Program.java
  * <p>
- * Description: The Program class serves as the central storage container for a BASIC program throughout its lifecycle.
+ * Description: The Program class serves as the central storage container for a FORTH program throughout its lifecycle.
  * It holds the program source, tokenised representation, parsed statements, and maintains line number cross-references
  * for runtime navigation.
  * <p>

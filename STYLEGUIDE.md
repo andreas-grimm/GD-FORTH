@@ -1,8 +1,8 @@
-# GD-BASIC Java Style Guide
+# GD-FORTH Java Style Guide
 
 ## Overview
 
-This style guide ensures consistent, readable code across the GD-BASIC project. Our primary goals are **conciseness**, **readability**, and **simplicity**.
+This style guide ensures consistent, readable code across the GD-FORTH project. Our primary goals are **conciseness**, **readability**, and **simplicity**.
 
 ### Key Principles
 
@@ -547,4 +547,4 @@ wip
 
 ---
 
-This style guide ensures consistent, maintainable code across the GD-BASIC project. All developers should follow these conventions to maintain code quality and readability.
+This style guide ensures consistent, maintainable code across the GD-FORTH project. All developers should follow these conventions to maintain code quality and readability.

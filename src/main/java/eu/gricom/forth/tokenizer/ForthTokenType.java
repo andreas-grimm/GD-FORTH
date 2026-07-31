@@ -61,6 +61,8 @@ public enum ForthTokenType {
             NOT_EQUALS,
             EQUALS,
             GREATER_THAN,
+            LESS_EQUAL,
+            GREATER_EQUAL,
             TO_BODY,
             TO_FLOAT,
             TO_IN,

@@ -9,9 +9,9 @@ import eu.gricom.forth.variableTypes.Value;
 /**
  * PrintStatement.java
  * <p>
- * Description: The PrintStatement class implements the BASIC PRINT command. It evaluates one or more expressions,
+ * Description: The PrintStatement class implements the FORTH output operation. It evaluates one or more expressions,
  * converts the results to string format, and outputs them to the console. It supports multiple expressions separated
- * by semicolons or commas, with optional line termination suppression.
+ * by spaces, with optional line termination.
  * <p>
  * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway
  */

@@ -154,17 +154,17 @@ class FileHandlerTest {
     }
 
     @Test
-    @DisplayName("readFile should handle file with BASIC syntax")
-    void testReadFileBasicSyntax() throws IOException {
-        String testFilePath = TEST_DIR + "/basic_code.bas";
-        String basicCode = "10 PRINT \"HELLO WORLD\"\n20 INPUT X\n30 END\n";
+    @DisplayName("readFile should handle file with FORTH syntax")
+    void testReadFileForthSyntax() throws IOException {
+        String testFilePath = TEST_DIR + "/forth_code.fs";
+        String forthCode = ": HELLO .\" HELLO WORLD\" CR ;\nHELLO\n5 10 + .\n";
 
-        createTestFile(testFilePath, basicCode);
+        createTestFile(testFilePath, forthCode);
 
         String result = FileHandler.readFile(testFilePath);
-        assertNotNull(result, "Should read BASIC file");
-        assertTrue(result.contains("PRINT"), "Should preserve BASIC keywords");
-        assertTrue(result.contains("INPUT"), "Should preserve all statements");
+        assertNotNull(result, "Should read FORTH file");
+        assertTrue(result.contains("HELLO"), "Should preserve FORTH word definitions");
+        assertTrue(result.contains("+"), "Should preserve all operations");
     }
 
     @Test
@@ -302,9 +302,9 @@ class FileHandlerTest {
     @DisplayName("writeFile should not throw exception with valid file type")
     void testWriteFileValidType() {
         // Note: First set a file via readFile or initialization
-        String testFilePath = TEST_DIR + "/write_test.bas";
+        String testFilePath = TEST_DIR + "/write_test.fs";
         try {
-            createTestFile(testFilePath, "10 PRINT \"TEST\"\n");
+            createTestFile(testFilePath, ": TEST .\" TEST\" CR ;\n");
             FileHandler.readFile(testFilePath);
             assertDoesNotThrow(() -> FileHandler.writeFile("asm"),
                 "writeFile should not throw for valid file type");
@@ -316,8 +316,8 @@ class FileHandlerTest {
     @Test
     @DisplayName("writeFile should handle different file extensions")
     void testWriteFileDifferentExtensions() throws IOException {
-        String testFilePath = TEST_DIR + "/extension_test.bas";
-        createTestFile(testFilePath, "10 PRINT \"TEST\"\n");
+        String testFilePath = TEST_DIR + "/extension_test.fs";
+        createTestFile(testFilePath, ": TEST .\" TEST\" CR ;\n");
         FileHandler.readFile(testFilePath);
 
         String[] extensions = {"asm", "c", "java", "txt", "out"};
@@ -331,8 +331,8 @@ class FileHandlerTest {
     @DisplayName("writeFile should handle empty file type")
     void testWriteFileEmptyType() {
         try {
-            String testFilePath = TEST_DIR + "/empty_type_test.bas";
-            createTestFile(testFilePath, "TEST\n");
+            String testFilePath = TEST_DIR + "/empty_type_test.fs";
+            createTestFile(testFilePath, "DUP\n");
             FileHandler.readFile(testFilePath);
             assertDoesNotThrow(() -> FileHandler.writeFile(""),
                 "writeFile should handle empty file type");
@@ -345,8 +345,8 @@ class FileHandlerTest {
     @DisplayName("writeFile should handle null file type")
     void testWriteFileNullType() {
         try {
-            String testFilePath = TEST_DIR + "/null_type_test.bas";
-            createTestFile(testFilePath, "TEST\n");
+            String testFilePath = TEST_DIR + "/null_type_test.fs";
+            createTestFile(testFilePath, "SWAP\n");
             FileHandler.readFile(testFilePath);
             assertDoesNotThrow(() -> FileHandler.writeFile(null),
                 "writeFile should handle null file type");
@@ -356,15 +356,15 @@ class FileHandlerTest {
     }
 
     @Test
-    @DisplayName("writeFile should work with BASIC source file")
-    void testWriteFileBasicSource() throws IOException {
-        String testFilePath = TEST_DIR + "/source_test.bas";
-        String basicCode = "10 REM Test program\n20 PRINT \"Hello\"\n30 END\n";
-        createTestFile(testFilePath, basicCode);
+    @DisplayName("writeFile should work with FORTH source file")
+    void testWriteFileForthSource() throws IOException {
+        String testFilePath = TEST_DIR + "/source_test.fs";
+        String forthCode = "( Test program )\n: TEST .\" Test\" CR ;\nTEST\n";
+        createTestFile(testFilePath, forthCode);
         FileHandler.readFile(testFilePath);
 
         assertDoesNotThrow(() -> FileHandler.writeFile("asm"),
-            "writeFile should work with BASIC source");
+            "writeFile should work with FORTH source");
     }
 
     @Test

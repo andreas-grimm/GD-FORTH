@@ -101,6 +101,29 @@ public class ForthParser implements Parser {
                     aoStatements.add(parseArithmeticStatement());
                     _iPosition++;
                     break;
+
+                // Multiple Tokens: Can be one of these: =, <, > , <>, <=, >=
+                case EQUALS:
+                case LESS_THAN:
+                case GREATER_THAN:
+                case NOT_EQUALS:
+                case LESS_EQUAL:
+                case GREATER_EQUAL:
+                    aoStatements.add(parseComparisonsStatement());
+                    _iPosition++;
+                    break;
+
+                // Multiple Tokens: Can be one of these: 0=, 0<, 0> , 0<>
+                case ZERO_EQUALS:
+                case ZERO_LESS:
+                case ZERO_GREATER:
+                case ZERO_NOT_EQUALS:
+//                case LESS_EQUAL:
+//                case GREATER_EQUAL:
+                    aoStatements.add(parseValueComparisonStatement());
+                    _iPosition++;
+                    break;
+
                 // No Token identified, Syntax Error
                 default:
                     throw new SyntaxErrorException("Incorrect Command: " + getToken(0).getLine() + ": ["
@@ -164,6 +187,14 @@ public class ForthParser implements Parser {
 
     private Statement parseArithmeticStatement() {
         return new ArithmeticStatement(getToken(0).getType(), _iPosition);
+    }
+
+    private Statement parseComparisonsStatement() {
+        return new ComparsionsStatement(getToken(0).getType(), _iPosition);
+    }
+
+    private Statement parseValueComparisonStatement() {
+        return new ValueComparsionStatement(getToken(0).getType(), _iPosition);
     }
 
     /**

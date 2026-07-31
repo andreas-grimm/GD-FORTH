@@ -9,15 +9,15 @@ import java.util.Map;
 /**
  * LineNumberXRef.java
  * <p>
- * Description: The LineNumberXRef class maintains cross-reference tables that map between BASIC source line numbers,
- * token positions, and statement indices. This enables the interpreter to navigate program flow for GOTO, GOSUB, and
- * loop constructs by translating line numbers to executable statement positions.
+ * Description: The LineNumberXRef class maintains cross-reference tables that map between FORTH line numbers,
+ * token positions, and statement indices. This enables the interpreter to navigate program flow by translating line
+ * references to executable statement positions.
  * <p>
  * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway
  */
 public class LineNumberXRef {
     private final Logger _oLogger = new Logger(this.getClass().getName());
-    private final static Map<Integer, Integer> _aoLineNumbers = new HashMap<>(); // Key: Token, Basic Source Line: Value
+    private final static Map<Integer, Integer> _aoLineNumbers = new HashMap<>(); // Key: Token, FORTH Source Line: Value
     private final static Map<Integer, Integer> _aoStatementNumbers = new HashMap<>();
 
     /**
@@ -48,7 +48,7 @@ public class LineNumberXRef {
      * get the statement number of the line number searched.
      *
      * @param iTokenNumber token number
-     * @return BASIC source code line number
+     * @return FORTH source code line number
      * @throws RuntimeException a requested token number was not found
      */
     public final int getLineNumberFromToken(final int iTokenNumber) throws RuntimeException {
@@ -85,7 +85,7 @@ public class LineNumberXRef {
     /**
      * get the statement number of the line number searched.
      *
-     * @param iLineNumber BASIC source code line number
+     * @param iLineNumber FORTH source code line number
      * @return statement number
      * @throws RuntimeException a requested statement number was not found
      */
@@ -137,8 +137,8 @@ public class LineNumberXRef {
     /**
      * get the statement number of the line number searched.
      *
-     * @param iLineNumber BASIC source code line number
-     * @return next following BASIC source code number
+     * @param iLineNumber FORTH source code line number
+     * @return next following FORTH source code number
      */
     public final int getNextLineNumber(final int iLineNumber) {
         int iNextHigherStatement = 0;

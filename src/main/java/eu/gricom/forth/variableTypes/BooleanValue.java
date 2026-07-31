@@ -14,42 +14,35 @@ import eu.gricom.forth.error.SyntaxErrorException;
 public class BooleanValue implements Value {
     private final boolean _bValue;
 
+    // Forth does normally not support native boolean variables, so we use int representatives.
+    public static final int TRUE = -1;
+    public static final int FALSE = 0;
+
     /**
      * Default constructor.
-     *
-     * @param bValue Value to be stored in the container
-     */
-    public BooleanValue(final boolean bValue) {
-
-        _bValue = bValue;
-    }
-
-    /**
-     * Douple Type constructor.
-     *
-     * @param fValue Value to be stored in the container
-     */
-    public BooleanValue(final double fValue) {
-
-        if (fValue == 0) {
-            _bValue = false;
-        } else {
-            _bValue = true;
-        }
-    }
-
-    /**
-     * Integer Type constructor.
      *
      * @param iValue Value to be stored in the container
      */
     public BooleanValue(final int iValue) {
-
-        if (iValue == 0) {
-            _bValue = false;
-        } else {
+        if (iValue == TRUE) {
             _bValue = true;
+        } else {
+            _bValue = false;
         }
+    }
+
+    public BooleanValue(final boolean bValue) {
+        _bValue = bValue;
+    }
+
+
+    private boolean toBoolean() {
+        return _bValue;
+    }
+
+
+    public boolean isTrue() {
+        return _bValue;
     }
 
     /**
@@ -60,34 +53,25 @@ public class BooleanValue implements Value {
     @Override
     public final String toString() {
 
-        if (_bValue) {
-            return "True";
+        if (_bValue == true) {
+            return "TRUE";
         }
 
-        return "False";
+        return "FALSE";
     }
 
     /**
-     * Override the standart toString method.
+     * Value types override this to convert themselves to a numeric representation.
      *
-     * @return the content of the variable as a string
+     * @return the value as a double
      */
-    public final boolean toBoolean() {
-        return _bValue;
-    }
-
-    /**
-     * Transform the content of the number value into a double.
-     *
-     * @return the content of the variable as a double
-     */
-    public final double toReal() {
-
-        if (_bValue) {
-            return 1;
+    @Override
+    public double toReal() {
+        if (_bValue == true) {
+            return TRUE;
         }
 
-        return 0;
+        return FALSE;
     }
 
     /**
@@ -97,10 +81,11 @@ public class BooleanValue implements Value {
      */
     @Override
     public int toInteger() {
-        if (_bValue) {
-            return 1;
+        if (_bValue == true) {
+            return TRUE;
         }
-        return 0;
+
+        return FALSE;
     }
 
     /**
@@ -113,19 +98,9 @@ public class BooleanValue implements Value {
         return this;
     }
 
-    /**
-     * Return the value field as an object.
-     *
-     * @return the number value as an object
-     */
-    public final boolean isTrue() {
-
-        return _bValue;
-    }
-
     @Override
     public final Value equals(final Value oValue) throws SyntaxErrorException {
-        if (oValue instanceof BooleanValue) {
+        if (oValue instanceof IntegerValue) {
             if (this.toReal() == oValue.toReal()) {
                 return new BooleanValue(true);
             }

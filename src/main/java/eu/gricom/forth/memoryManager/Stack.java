@@ -71,6 +71,6 @@ public class Stack {
      * Clear the Stack.
      */
     public final void reset() {
-        _oStack.empty();
+        _oStack.clear();
     }
 }

@@ -49,8 +49,8 @@ public class ProgramTest {
     @Test
     @DisplayName("load should store program name and source correctly")
     public void testLoadAndGetters() {
-        String name = "test.bas";
-        String source = "10 PRINT \"Hello\"";
+        String name = "test.fs";
+        String source = ": HELLO .\" Hello\" CR ;";
         _oProgram.load(name, source);
 
         assertEquals(name, _oProgram.getProgramName(), "Program name should be stored correctly");
@@ -60,7 +60,7 @@ public class ProgramTest {
     @Test
     @DisplayName("load should handle null program name")
     public void testLoadNullName() {
-        String source = "10 PRINT \"Hello\"";
+        String source = ": HELLO .\" Hello\" CR ;";
         _oProgram.load(null, source);
 
         assertNull(_oProgram.getProgramName(), "Program name should be null");
@@ -70,7 +70,7 @@ public class ProgramTest {
     @Test
     @DisplayName("load should handle null program source")
     public void testLoadNullSource() {
-        String name = "test.bas";
+        String name = "test.fs";
         _oProgram.load(name, null);
 
         assertEquals(name, _oProgram.getProgramName(), "Program name should be stored");
@@ -123,7 +123,7 @@ public class ProgramTest {
     @Test
     @DisplayName("setProgram should update program source")
     public void testSetProgram() {
-        String source = "20 GOTO 10";
+        String source = "DUP DROP SWAP";
         _oProgram.setProgram(source);
         assertEquals(source, _oProgram.getProgram(), "Program source should be updated");
     }
@@ -131,7 +131,7 @@ public class ProgramTest {
     @Test
     @DisplayName("setProgram should handle null")
     public void testSetProgramNull() {
-        _oProgram.load("test.bas", "10 PRINT \"Hello\"");
+        _oProgram.load("test.fs", ": HELLO .\" Hello\" CR ;");
         _oProgram.setProgram(null);
         assertNull(_oProgram.getProgram(), "Program source should be null");
     }
@@ -139,7 +139,7 @@ public class ProgramTest {
     @Test
     @DisplayName("setProgram should handle empty string")
     public void testSetProgramEmpty() {
-        _oProgram.load("test.bas", "10 PRINT \"Hello\"");
+        _oProgram.load("test.fs", ": HELLO .\" Hello\" CR ;");
         _oProgram.setProgram("");
         assertEquals("", _oProgram.getProgram(), "Program source should be empty");
     }
@@ -147,9 +147,9 @@ public class ProgramTest {
     @Test
     @DisplayName("setProgram should overwrite existing source")
     public void testSetProgramOverwrite() {
-        _oProgram.load("test.bas", "10 PRINT \"First\"");
-        _oProgram.setProgram("20 PRINT \"Second\"");
-        assertEquals("20 PRINT \"Second\"", _oProgram.getProgram());
+        _oProgram.load("test.fs", ": FIRST .\" First\" CR ;");
+        _oProgram.setProgram(": SECOND .\" Second\" CR ;");
+        assertEquals(": SECOND .\" Second\" CR ;", _oProgram.getProgram());
     }
 
     @Test

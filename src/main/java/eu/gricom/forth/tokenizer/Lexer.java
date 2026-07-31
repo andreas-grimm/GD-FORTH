@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Lexer.java
  * <p>
- * Description: The Lexer interface defines the contract for tokenising BASIC source code. Implementations convert raw
+ * Description: The Lexer interface defines the contract for tokenising FORTH source code. Implementations convert raw
  * source text into a sequence of Token objects, each representing a meaningful unit of the program such as keywords,
  * identifiers, operators, numbers, and strings.
  * <p>

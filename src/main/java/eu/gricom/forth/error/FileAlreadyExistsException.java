@@ -3,7 +3,7 @@ package eu.gricom.forth.error;
 /**
  * FileAlreadyExistsException.java
  * <p>
- * Description: The FileAlreadyExistsException class is thrown when attempting to save a BASIC program
+ * Description: The FileAlreadyExistsException class is thrown when attempting to save a FORTH program
  * to a file that already exists. This exception indicates that the file operation cannot proceed because
  * the destination file is already present in the file system and would be overwritten.
  * <p>

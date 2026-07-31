@@ -3,7 +3,7 @@ package eu.gricom.forth.error;
 /**
  * SyntaxErrorException.java
  * <p>
- * Description: The SyntaxErrorException is thrown when the parser or interpreter encounters invalid BASIC syntax. This
+ * Description: The SyntaxErrorException is thrown when the parser or interpreter encounters invalid FORTH syntax. This
  * includes unrecognised keywords, malformed expressions, and structural errors. The exception propagates to the main
  * class for error reporting and program termination.
  * <p>

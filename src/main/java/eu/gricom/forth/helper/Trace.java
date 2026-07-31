@@ -3,8 +3,8 @@ package eu.gricom.forth.helper;
 /**
  * Trace.java
  * <p>
- * Description: The Trace class provides execution tracing capabilities for debugging BASIC programs. When enabled
- * through the @PRAGMA directive or TRON command, it prints the current BASIC line number during execution, helping
+ * Description: The Trace class provides execution tracing capabilities for debugging FORTH programs. When enabled
+ * through the @PRAGMA directive, it prints the current line number during execution, helping
  * developers follow program flow.
  * <p>
  * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway

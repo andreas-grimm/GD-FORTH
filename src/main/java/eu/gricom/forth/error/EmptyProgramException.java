@@ -3,7 +3,7 @@ package eu.gricom.forth.error;
 /**
  * EmptyProgramException.java
  * <p>
- * Description: The EmptyProgramException class is thrown when attempting to load a BASIC program
+ * Description: The EmptyProgramException class is thrown when attempting to load a FORTH program
  * from a file that exists but contains no content. This exception indicates that the program file
  * is empty and cannot be processed by the interpreter.
  * <p>
