@@ -73,4 +73,12 @@ public class Stack {
     public final void reset() {
         _oStack.clear();
     }
+
+    public int size() {
+        return (_oStack.size());
+    }
+
+    public Value get(int iIndex) {
+        return ((Value)_oStack.get(iIndex));
+    }
 }

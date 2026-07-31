@@ -162,6 +162,226 @@ class ForthParserTest {
         assertTrue(statements.size() > 0);
     }
 
+    // ============================================================================
+    // Stack Operation Tests
+    // ============================================================================
+
+    @Test
+    void testDupeStackOperation() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("DUP", ForthTokenType.DUPE, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testQuestionDupeStackOperation() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("?DUP", ForthTokenType.QUESTION_DUPE, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testDropStackOperation() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("DROP", ForthTokenType.DROP, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testTwoDropStackOperation() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("6", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2DROP", ForthTokenType.TWO_DROP, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testSwapStackOperation() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("6", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("SWAP", ForthTokenType.SWAP, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testTwoSwapStackOperation() throws Exception {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("3", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("4", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2SWAP", ForthTokenType.TWO_SWAP, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testOverStackOperation() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("6", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("OVER", ForthTokenType.OVER, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testTwoOverStackOperation() throws Exception {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("3", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("4", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2OVER", ForthTokenType.TWO_OVER, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testRotStackOperation() throws Exception {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("3", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("ROT", ForthTokenType.ROT, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testTwoRotStackOperation() throws Exception {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("3", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("4", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("6", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2ROT", ForthTokenType.TWO_ROT, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testMinusRotStackOperation() throws Exception {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("3", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("-ROT", ForthTokenType.MINUS_ROT, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testNipStackOperation() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("6", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("NIP", ForthTokenType.NIP, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testTuckStackOperation() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("6", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("TUCK", ForthTokenType.TUCK, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testPickStackOperation() throws Exception {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("3", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("PICK", ForthTokenType.PICK, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testDepthStackOperation() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("6", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("DEPTH", ForthTokenType.DEPTH, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testParseStackStatementMethod() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("DUP", ForthTokenType.DUPE, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() >= 2, "Should have at least NumberStatement and StackStatement");
+    }
+
     @Test
     void testComplexArithmeticExpression() throws Exception {
         tokens.add(new Token("10", ForthTokenType.NUMBER, 1));

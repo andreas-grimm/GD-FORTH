@@ -124,6 +124,26 @@ public class ForthParser implements Parser {
                     _iPosition++;
                     break;
 
+                case DUPE:
+                case QUESTION_DUPE:
+                case DROP:
+                case TWO_DROP:
+                case SWAP:
+                case TWO_SWAP:
+                case OVER:
+                case TWO_OVER:
+                case ROT:
+                case TWO_ROT:
+                case MINUS_ROT:
+                case NIP:
+                case TUCK:
+                case PICK:
+                case ROLL:
+                case DEPTH:
+                    aoStatements.add(parseStackStatement());
+                    _iPosition++;
+                    break;
+
                 // No Token identified, Syntax Error
                 default:
                     throw new SyntaxErrorException("Incorrect Command: " + getToken(0).getLine() + ": ["
@@ -195,6 +215,10 @@ public class ForthParser implements Parser {
 
     private Statement parseValueComparisonStatement() {
         return new ValueComparsionStatement(getToken(0).getType(), _iPosition);
+    }
+
+    private Statement parseStackStatement() {
+        return new StackStatement(getToken(0).getType(), _iPosition);
     }
 
     /**
