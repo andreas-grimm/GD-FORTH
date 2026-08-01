@@ -1,9 +1,13 @@
 package eu.gricom.forth.memoryManager;
 
+import eu.gricom.forth.error.FileAlreadyExistsException;
 import eu.gricom.forth.helper.Logger;
 import eu.gricom.forth.statements.Statement;
 import eu.gricom.forth.tokenizer.Token;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -275,5 +279,37 @@ public class Program {
         }
 
         return true;
+    }
+
+    /**
+     * Save program to file.
+     * Saves the program source code to a file. If the filename has no suffix,
+     * ".forth" is automatically appended. Throws FileAlreadyExistsException if
+     * the file already exists.
+     *
+     * @param strFilename The name of the file to save to (without extension if no suffix provided)
+     * @throws FileAlreadyExistsException if file already exists
+     * @throws IOException if an I/O error occurs during file writing
+     */
+    public final void save(String strFilename) throws FileAlreadyExistsException, IOException {
+        // Add ".forth" suffix if filename has no suffix
+        String strFinalFilename = strFilename;
+        if (!strFilename.contains(".")) {
+            strFinalFilename = strFilename + ".forth";
+        }
+
+        // Check if file already exists
+        File oFile = new File(strFinalFilename);
+        if (oFile.exists()) {
+            throw new FileAlreadyExistsException(strFinalFilename);
+        }
+
+        // Create file and write program source
+        try (FileWriter oWriter = new FileWriter(oFile)) {
+            if (_strProgramSource != null) {
+                oWriter.write(_strProgramSource);
+            }
+            _oLogger.info("Program saved to file: " + strFinalFilename);
+        }
     }
 }

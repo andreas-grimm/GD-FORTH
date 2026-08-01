@@ -3,7 +3,10 @@ package eu.gricom.forth.parser;
 import eu.gricom.forth.error.SyntaxErrorException;
 import eu.gricom.forth.helper.Logger;
 import eu.gricom.forth.memoryManager.LineNumberXRef;
+import eu.gricom.forth.memoryManager.Variables;
 import eu.gricom.forth.statements.*;
+import eu.gricom.forth.statements.stack.DepthStatement;
+import eu.gricom.forth.statements.variables.StoreStatement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.tokenizer.Token;
 
@@ -78,6 +81,12 @@ public class ForthParser implements Parser {
                     _iPosition++;
                     break;
 */
+                // Variable Statements
+                case STORE:
+                    aoStatements.add(new StoreStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 // PRINT Token: print to the terminal
                 case CARRIAGE_RETURN:
                 case PRINT:
@@ -139,8 +148,23 @@ public class ForthParser implements Parser {
                 case TUCK:
                 case PICK:
                 case ROLL:
-                case DEPTH:
                     aoStatements.add(parseStackStatement());
+                    _iPosition++;
+                    break;
+
+                case DEPTH:
+                    aoStatements.add(new DepthStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case VARIABLE:
+                    String strVariableName = getToken(1).getText();
+                    aoStatements.add(new VariableStatement(getToken(0),_iPosition,strVariableName));
+                    _iPosition = _iPosition + 2;
+                    break;
+
+                case WORD:
+                    aoStatements.add(parseWordStatement());
                     _iPosition++;
                     break;
 
@@ -229,6 +253,16 @@ public class ForthParser implements Parser {
      */
     private Statement parsePrintStatement() throws SyntaxErrorException {
         return new PrintStatement(getToken(0), _iPosition);
+    }
+
+    private Statement parseWordStatement() throws SyntaxErrorException {
+        Variables oVariables = new Variables();
+
+        if (oVariables.isVariable(getToken(0).getText())) {
+            return (new VariableStatement(getToken(0), _iPosition));
+        }
+
+        throw new SyntaxErrorException("Word not identified: " + getToken(0).getText());
     }
 
     /**

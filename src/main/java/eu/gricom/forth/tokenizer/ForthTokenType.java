@@ -39,15 +39,15 @@ public enum ForthTokenType {
             TWO_STORE,
             TWO_STAR,
             TWO_SLASH,
-            TWO_TO_R,
+            /*TWO_TO_R,*/
             TWO_FETCH,
             TWO_CONSTANT,
             TWO_DROP,
             TWO_DUPE,
             TWO_LITERAL,
             TWO_OVER,
-            TWO_R_FROM,
-            TWO_R_FETCH,
+            /*TWO_R_FROM,*/
+            /*TWO_R_FETCH,*/
             TWO_ROT,
             TWO_SWAP,
             TWO_VALUE,
@@ -67,7 +67,7 @@ public enum ForthTokenType {
             TO_FLOAT,
             TO_IN,
             TO_NUMBER,
-            TO_R,
+            /*TO_R,*/
             QUESTION,
             QUESTION_DO,
             QUESTION_DUPE,
@@ -98,10 +98,10 @@ public enum ForthTokenType {
             BUFFER,
             BUFFER_COLON,
             BYE,
-            C_STORE,
+            CHAR_STORE,
             C_QUOTE,
             C_COMMA,
-            C_FETCH,
+            CHAR_FETCH,
             CASE,
             CATCH,
             CELL_PLUS,
@@ -308,13 +308,13 @@ public enum ForthTokenType {
             MOD,
             MOVE,
             MS,
-            N_TO_R,
+            /*N_TO_R,*/
             NAME_TO_COMPILE,
             NAME_TO_INTERPRET,
             NAME_TO_STRING,
             NEGATE,
             NIP,
-            N_R_FROM,
+            /*N_R_FROM,*/
             OF,
             ONLY,
             OPEN_FILE,
@@ -332,8 +332,8 @@ public enum ForthTokenType {
             QUIT,
             R_O,
             R_W,
-            R_FROM,
-            R_FETCH,
+            /*R_FROM,*/
+            /*R_FETCH,*/
             READ_FILE,
             READ_LINE,
             RECURSE,

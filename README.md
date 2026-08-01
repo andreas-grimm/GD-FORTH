@@ -23,6 +23,24 @@ Objective for the implementation
 - ✅ **Production Ready**
 - ✅ **Well Documented**
 
+# Differences to existing Standards:
+
+## No support of the Result Stack
+
+As the modification of the running code by the programming is nowadays seen as an antipattern, this interpreter will not
+implement that functionality. Therefore, the following defined reserved words will not be implemented:
+
+| Reserved word | Description                               |
+|---------------|-------------------------------------------|
+| >R      	    | Move top stack value to return stack      |
+| R>	        | Move top return stack value to stack      |
+| R@	        | Copy top return stack value to stack      |
+| 2>R	        | Move top two values to return stack       |
+| 2R>	        | Move top two return stack values to stack |
+| 2R@	        | Copy top two return stack values to stack |
+| N>R	        | Move n values to return stack             |
+| NR>	        | Move n values from return stack           |
+
 ---
 
 ## 🚀 Quick Start

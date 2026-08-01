@@ -1,12 +1,18 @@
 package eu.gricom.forth.memoryManager;
 
+import eu.gricom.forth.error.FileAlreadyExistsException;
 import eu.gricom.forth.statements.Statement;
 import eu.gricom.forth.tokenizer.Token;
 import eu.gricom.forth.tokenizer.ForthTokenType;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,16 +21,42 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * ProgramTest.java
  * <p>
- * Test suite for Program class, testing program storage and management functionality.
+ * Comprehensive test suite for Program class, testing program storage, management,
+ * and file save functionality.
  */
 @DisplayName("Program Test Suite")
 public class ProgramTest {
 
     private Program _oProgram;
+    private static final String TEST_DIR = "target/test-forth-files/";
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
         _oProgram = new Program();
+        // Create test directory if it doesn't exist
+        new File(TEST_DIR).mkdirs();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        // Clean up test files recursively
+        deleteDirectory(new File(TEST_DIR));
+    }
+
+    private void deleteDirectory(File dir) {
+        if (dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectory(file);
+                    } else {
+                        file.delete();
+                    }
+                }
+            }
+            dir.delete();
+        }
     }
 
     // ===== CONSTRUCTOR TESTS =====
@@ -443,5 +475,216 @@ public class ProgramTest {
         // p2 should not be affected
         assertEquals("EMIT KEY DROP", p2.getProgram(), "p2 should be unaffected by p1 modification");
         assertFalse(p1.equals(p2), "Programs should not be equal after p1 modification");
+    }
+
+    // ===== SAVE METHOD TESTS =====
+
+    @Test
+    @DisplayName("save should create file with .forth suffix when no suffix provided")
+    public void testSaveWithoutSuffix() throws Exception {
+        _oProgram.addLine("1 2 +");
+        _oProgram.save(TEST_DIR + "test_program");
+
+        File oFile = new File(TEST_DIR + "test_program.forth");
+        assertTrue(oFile.exists(), "File should be created with .forth suffix");
+
+        String content = readFileContent(oFile);
+        assertTrue(content.contains("1 2 +"), "File should contain program content");
+    }
+
+    @Test
+    @DisplayName("save should preserve explicit suffix when provided")
+    public void testSaveWithExplicitSuffix() throws Exception {
+        _oProgram.addLine("10 20 *");
+        _oProgram.save(TEST_DIR + "program.forth");
+
+        File oFile = new File(TEST_DIR + "program.forth");
+        assertTrue(oFile.exists(), "File should be created with explicit suffix");
+
+        String content = readFileContent(oFile);
+        assertTrue(content.contains("10 20 *"), "File should contain program content");
+    }
+
+    @Test
+    @DisplayName("save should preserve different suffixes")
+    public void testSaveWithDifferentSuffix() throws Exception {
+        _oProgram.addLine("DUP DROP");
+        _oProgram.save(TEST_DIR + "myprogram.txt");
+
+        File oFile = new File(TEST_DIR + "myprogram.txt");
+        assertTrue(oFile.exists(), "File should be created with specified suffix");
+
+        String content = readFileContent(oFile);
+        assertTrue(content.contains("DUP DROP"), "File should contain program content");
+    }
+
+    @Test
+    @DisplayName("save should throw exception when file already exists")
+    public void testSaveThrowsExceptionWhenFileExists() throws Exception {
+        _oProgram.addLine("initial content");
+        _oProgram.save(TEST_DIR + "existing_file");
+
+        Program oProgram2 = new Program();
+        oProgram2.addLine("new content");
+
+        assertThrows(FileAlreadyExistsException.class, () -> {
+            oProgram2.save(TEST_DIR + "existing_file");
+        }, "Should throw FileAlreadyExistsException when file exists");
+    }
+
+    @Test
+    @DisplayName("save should throw exception for existing file with explicit suffix")
+    public void testSaveThrowsExceptionWithExplicitSuffix() throws Exception {
+        _oProgram.addLine("content 1");
+        _oProgram.save(TEST_DIR + "duplicate.forth");
+
+        Program oProgram2 = new Program();
+        oProgram2.addLine("content 2");
+
+        assertThrows(FileAlreadyExistsException.class, () -> {
+            oProgram2.save(TEST_DIR + "duplicate.forth");
+        }, "Should throw exception for existing file with explicit suffix");
+    }
+
+    @Test
+    @DisplayName("save should preserve exact program content")
+    public void testSavePreservesContent() throws Exception {
+        _oProgram.addLine("1 2 + 3 * 4 /");
+        _oProgram.addLine("5 6 - 7 +");
+        _oProgram.save(TEST_DIR + "content_test");
+
+        File oFile = new File(TEST_DIR + "content_test.forth");
+        String fileContent = readFileContent(oFile);
+
+        assertTrue(fileContent.contains("1 2 + 3 * 4 /"), "Should preserve first line");
+        assertTrue(fileContent.contains("5 6 - 7 +"), "Should preserve second line");
+    }
+
+    @Test
+    @DisplayName("save should handle multiple lines correctly")
+    public void testSaveWithMultipleLines() throws Exception {
+        _oProgram.addLine("VARIABLE counter");
+        _oProgram.addLine("0 counter !");
+        _oProgram.addLine(": increment  counter @  1 +  counter ! ;");
+        _oProgram.save(TEST_DIR + "multiline");
+
+        File oFile = new File(TEST_DIR + "multiline.forth");
+        String content = readFileContent(oFile);
+
+        assertTrue(content.contains("VARIABLE counter"), "Should preserve first line");
+        assertTrue(content.contains("0 counter !"), "Should preserve second line");
+        assertTrue(content.contains("increment"), "Should preserve function definition");
+    }
+
+    @Test
+    @DisplayName("save should handle empty program")
+    public void testSaveEmptyProgram() throws Exception {
+        _oProgram.save(TEST_DIR + "empty_prog");
+
+        File oFile = new File(TEST_DIR + "empty_prog.forth");
+        assertTrue(oFile.exists(), "File should be created even for empty program");
+    }
+
+    @Test
+    @DisplayName("save should preserve special characters")
+    public void testSaveWithSpecialCharacters() throws Exception {
+        _oProgram.addLine("\"Hello, FORTH!\" .\"");
+        _oProgram.save(TEST_DIR + "special_chars");
+
+        File oFile = new File(TEST_DIR + "special_chars.forth");
+        String content = readFileContent(oFile);
+
+        assertTrue(content.contains("Hello, FORTH!"), "Should preserve special characters");
+    }
+
+    @Test
+    @DisplayName("save should create files at full path with subdirectories")
+    public void testSaveWithFullPath() throws Exception {
+        _oProgram.addLine("test content");
+        String fullPath = TEST_DIR + "subdir/test_full_path";
+
+        new File(TEST_DIR + "subdir").mkdirs();
+        _oProgram.save(fullPath);
+
+        File oFile = new File(fullPath + ".forth");
+        assertTrue(oFile.exists(), "File should be created at full path");
+    }
+
+    @Test
+    @DisplayName("save should allow saving same content to different files")
+    public void testSaveSameProgramTwoDifferentFiles() throws Exception {
+        _oProgram.addLine("shared content");
+        _oProgram.save(TEST_DIR + "file1");
+
+        Program oProgram2 = new Program();
+        oProgram2.load("file2", _oProgram.getProgram());
+        oProgram2.save(TEST_DIR + "file2");
+
+        File oFile1 = new File(TEST_DIR + "file1.forth");
+        File oFile2 = new File(TEST_DIR + "file2.forth");
+
+        assertTrue(oFile1.exists(), "First file should exist");
+        assertTrue(oFile2.exists(), "Second file should exist");
+        assertEquals(readFileContent(oFile1), readFileContent(oFile2), "Content should be identical");
+    }
+
+    @Test
+    @DisplayName("save should not modify program content after saving")
+    public void testSaveDoesNotModifyProgramContent() throws Exception {
+        String originalContent = "1 2 + DUP";
+        _oProgram.addLine(originalContent);
+        _oProgram.save(TEST_DIR + "preserve_test");
+
+        String currentContent = _oProgram.getProgram();
+        assertTrue(currentContent.contains(originalContent), "Program content should not be modified after save");
+    }
+
+    @Test
+    @DisplayName("save should handle filenames with numbers")
+    public void testSaveWithNumbersInFilename() throws Exception {
+        _oProgram.addLine("program 123");
+        _oProgram.save(TEST_DIR + "prog2024v001");
+
+        File oFile = new File(TEST_DIR + "prog2024v001.forth");
+        assertTrue(oFile.exists(), "Should handle filenames with numbers");
+    }
+
+    @Test
+    @DisplayName("save should handle filenames with underscores")
+    public void testSaveWithUnderscoreInFilename() throws Exception {
+        _oProgram.addLine("test");
+        _oProgram.save(TEST_DIR + "my_program_name");
+
+        File oFile = new File(TEST_DIR + "my_program_name.forth");
+        assertTrue(oFile.exists(), "Should handle filenames with underscores");
+    }
+
+    @Test
+    @DisplayName("FileAlreadyExistsException should contain filename in message")
+    public void testFileAlreadyExistsExceptionMessage() throws Exception {
+        _oProgram.addLine("first");
+        _oProgram.save(TEST_DIR + "error_test");
+
+        Program oProgram2 = new Program();
+        oProgram2.addLine("second");
+
+        FileAlreadyExistsException exception = assertThrows(FileAlreadyExistsException.class, () -> {
+            oProgram2.save(TEST_DIR + "error_test");
+        });
+
+        assertTrue(exception.getMessage().contains("error_test"), "Exception message should contain filename");
+    }
+
+    // ===== HELPER METHODS =====
+
+    private String readFileContent(File oFile) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(oFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+        }
+        return sb.toString();
     }
 }

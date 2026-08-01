@@ -47,14 +47,6 @@ This document maintains a comprehensive list of all FORTH reserved words that ha
 | `PICK` | Copy nth stack value to top |
 | `ROLL` | Move nth stack value to top |
 | `DEPTH` | Push current stack depth |
-| `>R` | Move top stack value to return stack |
-| `R>` | Move top return stack value to stack |
-| `R@` | Copy top return stack value to stack |
-| `2>R` | Move top two values to return stack |
-| `2R>` | Move top two return stack values to stack |
-| `2R@` | Copy top two return stack values to stack |
-| `N>R` | Move n values to return stack |
-| `NR>` | Move n values from return stack |
 
 ### Arithmetic Operations (30+ words)
 
