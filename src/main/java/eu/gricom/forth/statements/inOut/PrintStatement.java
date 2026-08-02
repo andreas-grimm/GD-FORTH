@@ -1,7 +1,8 @@
-package eu.gricom.forth.statements;
+package eu.gricom.forth.statements.inOut;
 
 import eu.gricom.forth.helper.Printer;
 import eu.gricom.forth.memoryManager.Stack;
+import eu.gricom.forth.statements.Statement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.tokenizer.Token;
 import eu.gricom.forth.variableTypes.Value;
@@ -55,19 +56,10 @@ public final class PrintStatement implements Statement {
     public void execute() {
         try {
             Stack oStack = new Stack();
-            if (_oTokenType == ForthTokenType.CARRIAGE_RETURN) {
-                System.out.print("\n");
-            } else {
-                Value oValue;
-                if (_oTokenType == ForthTokenType.PRINT_KEEP_STACK) {
-                    oValue = oStack.peek();
-                } else {
-                    oValue = oStack.pop();
-                }
+            Value oValue = oStack.pop();
 
-                String strValue = oValue.toString();
-                Printer.println(strValue);
-            }
+            String strValue = oValue.toString();
+            Printer.println(strValue);
         } catch (Exception e) {
             Printer.println(e.getMessage());
         }

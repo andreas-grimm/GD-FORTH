@@ -1,14 +1,15 @@
-package eu.gricom.forth.statements;
+package eu.gricom.forth.statements.comparison;
 
 
 import eu.gricom.forth.helper.ConsoleColors;
 import eu.gricom.forth.helper.Printer;
 import eu.gricom.forth.memoryManager.Stack;
+import eu.gricom.forth.statements.Statement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.variableTypes.BooleanValue;
 import eu.gricom.forth.variableTypes.IntegerValue;
 
-public class ValueComparsionStatement implements Statement {
+public class ZeroNotEqualsStatement implements Statement {
     private final ForthTokenType _oTokenType;
     private final int  _iTokenNumber;
 
@@ -18,8 +19,8 @@ public class ValueComparsionStatement implements Statement {
      * @param oForthTokenType - to determine the function to be executed
      * @param iTokenNumber - the number of this token related to this statement
      */
-    public ValueComparsionStatement(final ForthTokenType oForthTokenType,
-                                    final int iTokenNumber) {
+    public ZeroNotEqualsStatement(final ForthTokenType oForthTokenType,
+                                  final int iTokenNumber) {
         _oTokenType = oForthTokenType;
         _iTokenNumber = iTokenNumber;
     }
@@ -49,37 +50,10 @@ public class ValueComparsionStatement implements Statement {
             int iInteger = oStack.pop().toInteger();
             int iResult = 0;
 
-            switch (_oTokenType) {
-                case ZERO_EQUALS:
-                    if (iInteger == 0) {
-                        iResult = BooleanValue.TRUE;
-                    } else {
-                        iResult = BooleanValue.FALSE;
-                    }
-                    break;
-                case ZERO_LESS:
-                    if (iInteger < 0) {
-                        iResult = BooleanValue.TRUE;
-                    } else {
-                        iResult = BooleanValue.FALSE;
-                    }
-                    break;
-                case ZERO_GREATER:
-                    if (iInteger > 0) {
-                        iResult = BooleanValue.TRUE;
-                    } else {
-                        iResult = BooleanValue.FALSE;
-                    }
-                    break;
-                case ZERO_NOT_EQUALS:
-                    if (iInteger != 0) {
-                        iResult = BooleanValue.TRUE;
-                    } else {
-                        iResult = BooleanValue.FALSE;
-                    }
-                    break;
-                default:
-                    throw new ArithmeticException("Unknown token type in comparison");
+            if (iInteger != 0) {
+                iResult = BooleanValue.TRUE;
+            } else {
+                iResult = BooleanValue.FALSE;
             }
 
             oStack.push(new IntegerValue(iResult));

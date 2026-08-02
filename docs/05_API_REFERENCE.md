@@ -128,7 +128,7 @@ public interface Statement {
 
 **Implementations**:
 - `NumberStatement` — Push number to stack
-- `ArithmeticStatement` — Perform arithmetic
+- `ModuloStatement` — Perform arithmetic
 - `PrintStatement` — Output to console
 - `EmptyStatement` — End marker
 
@@ -574,7 +574,7 @@ case POWER:
 
 **Step 4**: Implement in statement
 ```java
-// In ArithmeticStatement.java
+// In ModuloStatement.java
 case POWER:
   iResult = (int) Math.pow(iInteger_2, iInteger_1);
   break;
@@ -715,7 +715,7 @@ GD-FORTH/
 mvn test
 
 # Run specific test class
-mvn test -Dtest=ArithmeticStatementTest
+mvn test -Dtest=ModuloStatementTest
 
 # Run with coverage
 mvn test jacoco:report

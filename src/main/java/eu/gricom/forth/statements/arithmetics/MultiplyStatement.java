@@ -1,14 +1,14 @@
-package eu.gricom.forth.statements;
+package eu.gricom.forth.statements.arithmetics;
 
 
-import eu.gricom.forth.Forth;
 import eu.gricom.forth.helper.ConsoleColors;
 import eu.gricom.forth.helper.Printer;
 import eu.gricom.forth.memoryManager.Stack;
+import eu.gricom.forth.statements.Statement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.variableTypes.IntegerValue;
 
-public class ArithmeticStatement implements Statement {
+public class MultiplyStatement implements Statement {
     private final ForthTokenType _oTokenType;
     private final int  _iTokenNumber;
 
@@ -18,8 +18,8 @@ public class ArithmeticStatement implements Statement {
      * @param oForthTokenType - to determine the function to be executed
      * @param iTokenNumber - the number of this token related to this statement
      */
-    public ArithmeticStatement(final ForthTokenType oForthTokenType,
-                           final int iTokenNumber) {
+    public MultiplyStatement(final ForthTokenType oForthTokenType,
+                             final int iTokenNumber) {
         _oTokenType = oForthTokenType;
         _iTokenNumber = iTokenNumber;
     }
@@ -50,25 +50,7 @@ public class ArithmeticStatement implements Statement {
             int iInteger_2 = oStack.pop().toInteger();
             int iResult = 0;
 
-            switch (_oTokenType) {
-                case PLUS:
-                    iResult = iInteger_2 + iInteger_1;
-                    break;
-                case MINUS:
-                    iResult = iInteger_2 - iInteger_1;
-                    break;
-                case MULTIPLY:
-                    iResult = iInteger_2 * iInteger_1;
-                    break;
-                case DIVIDE:
-                    iResult = iInteger_2 / iInteger_1;
-                    break;
-                case MOD:
-                    iResult = iInteger_2 % iInteger_1;
-                    break;
-                default:
-                    throw new ArithmeticException("Unknown token type in calculation");
-            }
+            iResult = iInteger_2 * iInteger_1;
 
             oStack.push(new IntegerValue(iResult));
 

@@ -1,4 +1,4 @@
-package eu.gricom.forth.statements.stack;
+package eu.gricom.forth.statements.comparison;
 
 
 import eu.gricom.forth.helper.ConsoleColors;
@@ -6,10 +6,10 @@ import eu.gricom.forth.helper.Printer;
 import eu.gricom.forth.memoryManager.Stack;
 import eu.gricom.forth.statements.Statement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
+import eu.gricom.forth.variableTypes.BooleanValue;
 import eu.gricom.forth.variableTypes.IntegerValue;
-import eu.gricom.forth.variableTypes.Value;
 
-public class TwoSwapStatement implements Statement {
+public class ZeroEqualsStatement implements Statement {
     private final ForthTokenType _oTokenType;
     private final int  _iTokenNumber;
 
@@ -19,8 +19,8 @@ public class TwoSwapStatement implements Statement {
      * @param oForthTokenType - to determine the function to be executed
      * @param iTokenNumber - the number of this token related to this statement
      */
-    public TwoSwapStatement(final ForthTokenType oForthTokenType,
-                            final int iTokenNumber) {
+    public ZeroEqualsStatement(final ForthTokenType oForthTokenType,
+                               final int iTokenNumber) {
         _oTokenType = oForthTokenType;
         _iTokenNumber = iTokenNumber;
     }
@@ -47,14 +47,17 @@ public class TwoSwapStatement implements Statement {
         Stack oStack = new Stack();
 
         try {
-            Value oValue_1_1 = oStack.pop();
-            Value oValue_1_2 = oStack.pop();
-            Value oValue_2_1 = oStack.pop();
-            Value oValue_2_2 = oStack.pop();
-            oStack.push(oValue_1_2);
-            oStack.push(oValue_1_1);
-            oStack.push(oValue_2_2);
-            oStack.push(oValue_2_1);
+            int iInteger = oStack.pop().toInteger();
+            int iResult = 0;
+
+            if (iInteger == 0) {
+                iResult = BooleanValue.TRUE;
+            } else {
+                iResult = BooleanValue.FALSE;
+            }
+
+            oStack.push(new IntegerValue(iResult));
+
         } catch (Exception eException) {
             Printer.println(ConsoleColors.RED + eException.getMessage() + ConsoleColors.RESET);
         }

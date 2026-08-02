@@ -5,7 +5,10 @@ import eu.gricom.forth.helper.Logger;
 import eu.gricom.forth.memoryManager.LineNumberXRef;
 import eu.gricom.forth.memoryManager.Variables;
 import eu.gricom.forth.statements.*;
-import eu.gricom.forth.statements.stack.DepthStatement;
+import eu.gricom.forth.statements.arithmetics.*;
+import eu.gricom.forth.statements.comparison.*;
+import eu.gricom.forth.statements.inOut.*;
+import eu.gricom.forth.statements.stack.*;
 import eu.gricom.forth.statements.variables.StoreStatement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.tokenizer.Token;
@@ -89,9 +92,17 @@ public class ForthParser implements Parser {
 
                 // PRINT Token: print to the terminal
                 case CARRIAGE_RETURN:
+                    aoStatements.add(new CarriageReturnStatement(getToken(0), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case PRINT:
+                    aoStatements.add(new PrintStatement(getToken(0), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case PRINT_KEEP_STACK:
-                    aoStatements.add(parsePrintStatement());
+                    aoStatements.add(new PrintKeepStackStatement(getToken(0), _iPosition));
                     _iPosition++;
                     break;
 
@@ -103,52 +114,153 @@ public class ForthParser implements Parser {
 
                 // Multiple Tokens: Can be one of these: +, - , *, /, MOD
                 case PLUS:
+                    aoStatements.add(new PlusStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case MINUS:
+                    aoStatements.add(new MinusStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case MULTIPLY:
+                    aoStatements.add(new MultiplyStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case DIVIDE:
+                    aoStatements.add(new DivideStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case MOD:
-                    aoStatements.add(parseArithmeticStatement());
+                    aoStatements.add(new ModuloStatement(getToken(0).getType(), _iPosition));
                     _iPosition++;
                     break;
 
                 // Multiple Tokens: Can be one of these: =, <, > , <>, <=, >=
                 case EQUALS:
-                case LESS_THAN:
-                case GREATER_THAN:
-                case NOT_EQUALS:
-                case LESS_EQUAL:
-                case GREATER_EQUAL:
-                    aoStatements.add(parseComparisonsStatement());
+                    aoStatements.add(new EqualsStatement(getToken(0).getType(), _iPosition));
                     _iPosition++;
                     break;
 
-                // Multiple Tokens: Can be one of these: 0=, 0<, 0> , 0<>
+                case LESS_THAN:
+                    aoStatements.add(new LessThanStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case GREATER_THAN:
+                    aoStatements.add(new GreaterThanStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case NOT_EQUALS:
+                    aoStatements.add(new NotEqualsStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case LESS_EQUAL:
+                    aoStatements.add(new LessEqualStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case GREATER_EQUAL:
+                    aoStatements.add(new GreaterEqualStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case ZERO_EQUALS:
+                    aoStatements.add(new ZeroEqualsStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case ZERO_LESS:
+                    aoStatements.add(new ZeroLessStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case ZERO_GREATER:
+                    aoStatements.add(new ZeroGreaterStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case ZERO_NOT_EQUALS:
-//                case LESS_EQUAL:
-//                case GREATER_EQUAL:
-                    aoStatements.add(parseValueComparisonStatement());
+                    aoStatements.add(new ZeroNotEqualsStatement(getToken(0).getType(), _iPosition));
                     _iPosition++;
                     break;
 
                 case DUPE:
+                    aoStatements.add(new DupeStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case QUESTION_DUPE:
+                    aoStatements.add(new QuestionDupeStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case DROP:
+                    aoStatements.add(new DropStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case TWO_DROP:
+                    aoStatements.add(new TwoDropStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case SWAP:
+                    aoStatements.add(new SwapStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case TWO_SWAP:
+                    aoStatements.add(new TwoSwapStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case OVER:
+                    aoStatements.add(new OverStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case TWO_OVER:
+                    aoStatements.add(new TwoOverStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case ROT:
+                    aoStatements.add(new RotStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case TWO_ROT:
+                    aoStatements.add(new TwoRotStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case MINUS_ROT:
+                    aoStatements.add(new MinusRotStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case NIP:
+                    aoStatements.add(new NipStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case TUCK:
+                    aoStatements.add(new TuckStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case PICK:
+                    aoStatements.add(new PickStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case ROLL:
-                    aoStatements.add(parseStackStatement());
+                    aoStatements.add(new RollStatement(getToken(0).getType(), _iPosition));
                     _iPosition++;
                     break;
 
@@ -227,22 +339,6 @@ public class ForthParser implements Parser {
         }
 
         return new NumberStatement(iNumber, _iPosition);
-    }
-
-    private Statement parseArithmeticStatement() {
-        return new ArithmeticStatement(getToken(0).getType(), _iPosition);
-    }
-
-    private Statement parseComparisonsStatement() {
-        return new ComparsionsStatement(getToken(0).getType(), _iPosition);
-    }
-
-    private Statement parseValueComparisonStatement() {
-        return new ValueComparsionStatement(getToken(0).getType(), _iPosition);
-    }
-
-    private Statement parseStackStatement() {
-        return new StackStatement(getToken(0).getType(), _iPosition);
     }
 
     /**

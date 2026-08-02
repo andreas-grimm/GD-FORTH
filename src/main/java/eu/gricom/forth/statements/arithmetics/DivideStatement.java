@@ -1,14 +1,14 @@
-package eu.gricom.forth.statements;
+package eu.gricom.forth.statements.arithmetics;
 
 
 import eu.gricom.forth.helper.ConsoleColors;
 import eu.gricom.forth.helper.Printer;
 import eu.gricom.forth.memoryManager.Stack;
+import eu.gricom.forth.statements.Statement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
-import eu.gricom.forth.variableTypes.BooleanValue;
 import eu.gricom.forth.variableTypes.IntegerValue;
 
-public class ComparsionsStatement implements Statement {
+public class DivideStatement implements Statement {
     private final ForthTokenType _oTokenType;
     private final int  _iTokenNumber;
 
@@ -18,8 +18,8 @@ public class ComparsionsStatement implements Statement {
      * @param oForthTokenType - to determine the function to be executed
      * @param iTokenNumber - the number of this token related to this statement
      */
-    public ComparsionsStatement(final ForthTokenType oForthTokenType,
-                                final int iTokenNumber) {
+    public DivideStatement(final ForthTokenType oForthTokenType,
+                           final int iTokenNumber) {
         _oTokenType = oForthTokenType;
         _iTokenNumber = iTokenNumber;
     }
@@ -50,52 +50,7 @@ public class ComparsionsStatement implements Statement {
             int iInteger_2 = oStack.pop().toInteger();
             int iResult = 0;
 
-            switch (_oTokenType) {
-                case EQUALS:
-                    if (iInteger_1 == iInteger_2) {
-                        iResult = BooleanValue.TRUE;
-                    } else {
-                        iResult = BooleanValue.FALSE;
-                    }
-                    break;
-                case LESS_THAN:
-                    if (iInteger_2 < iInteger_1) {
-                        iResult = BooleanValue.TRUE;
-                    } else {
-                        iResult = BooleanValue.FALSE;
-                    }
-                    break;
-                case GREATER_THAN:
-                    if (iInteger_2 > iInteger_1) {
-                        iResult = BooleanValue.TRUE;
-                    } else {
-                        iResult = BooleanValue.FALSE;
-                    }
-                    break;
-                case NOT_EQUALS:
-                    if (iInteger_1 != iInteger_2) {
-                        iResult = BooleanValue.TRUE;
-                    } else {
-                        iResult = BooleanValue.FALSE;
-                    }
-                    break;
-                case LESS_EQUAL:
-                    if (iInteger_2 <= iInteger_1) {
-                        iResult = BooleanValue.TRUE;
-                    } else {
-                        iResult = BooleanValue.FALSE;
-                    }
-                    break;
-                case GREATER_EQUAL:
-                    if (iInteger_2 >= iInteger_1) {
-                        iResult = BooleanValue.TRUE;
-                    } else {
-                        iResult = BooleanValue.FALSE;
-                    }
-                    break;
-                default:
-                    throw new ArithmeticException("Unknown token type in comparison");
-            }
+            iResult = iInteger_2 / iInteger_1;
 
             oStack.push(new IntegerValue(iResult));
 
