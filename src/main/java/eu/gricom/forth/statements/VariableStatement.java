@@ -2,35 +2,67 @@ package eu.gricom.forth.statements;
 
 import eu.gricom.forth.memoryManager.Stack;
 import eu.gricom.forth.memoryManager.Variables;
-import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.tokenizer.Token;
-import eu.gricom.forth.variableTypes.BooleanValue;
 import eu.gricom.forth.variableTypes.IntegerValue;
 
+/**
+ * VariableStatement.java
+ * <p>
+ * Description: The VariableStatement class implements FORTH variable operations.
+ * It handles two primary operations:
+ * 1. Variable definition (VARIABLE token): Creates a new variable and initializes it to "empty"
+ * 2. Variable access (WORD token): Pushes the index of a previously defined variable to the stack
+ * <p>
+ * When a VARIABLE token is processed, a new variable is added to the shared Variables storage
+ * and initialized with an empty StringValue. When a WORD token references a variable name,
+ * the statement retrieves the variable's index and pushes it to the stack for use with
+ * FetchStatement (@) and StoreStatement (!) operations.
+ * <p>
+ * Stack behavior for WORD token: ( -- index )
+ * <p>
+ * (c) = 2026,.., by Andreas Grimm, The Netherlands / Norway
+ */
 public class VariableStatement implements Statement {
-    private Token _oToken = null;
-    private final int  _iTokenNumber;
-    private Variables _oVariables = new Variables();
-    private String _strVariableName = null;
+    private final Token _oToken;
+    private final int _iTokenNumber;
+    private final Variables _oVariables = new Variables();
+    private final String _strVariableName;
 
-    public VariableStatement(final Token oToken,
-                             final int iTokenNumber) {
+    /**
+     * Constructor for variable access (WORD token).
+     * <p>
+     * Used when referencing an existing variable by name. The statement will
+     * look up the variable and push its index to the stack.
+     *
+     * @param oToken The token containing the variable name to access
+     * @param iTokenNumber The position/number of this token in the source code
+     */
+    public VariableStatement(final Token oToken, final int iTokenNumber) {
         _oToken = oToken;
         _iTokenNumber = iTokenNumber;
+        _strVariableName = null;
     }
 
-    public VariableStatement(final Token oToken,
-                             final int iTokenNumber,
-                             String strVariableName) {
+    /**
+     * Constructor for variable definition (VARIABLE token).
+     * <p>
+     * Used when defining a new variable with the VARIABLE keyword. The statement
+     * will create a new variable in the Variables storage and initialize it to "empty".
+     *
+     * @param oToken The token containing the variable name
+     * @param iTokenNumber The position/number of this token in the source code
+     * @param strVariableName The name of the variable to define
+     */
+    public VariableStatement(final Token oToken, final int iTokenNumber, final String strVariableName) {
         _oToken = oToken;
         _iTokenNumber = iTokenNumber;
         _strVariableName = strVariableName;
     }
 
     /**
-     * Get Token Number - get the number of the corresponding token to this statement.
+     * Get Token Number - retrieve the position of this statement in the source code.
      *
-     * @return the command line number of the statement
+     * @return the command line number/position of the statement
      */
     @Override
     public int getTokenNumber() {
@@ -38,42 +70,28 @@ public class VariableStatement implements Statement {
     }
 
     /**
-     * Statements implement this to actually perform whatever behavior the
-     * statement causes. "print" statements will display text here, "goto"
-     * statements will change the current statement, etc.
+     * Execute the variable operation.
+     * <p>
+     * For VARIABLE token: Defines a new variable with the provided name in the
+     * Variables storage, initializing it to "empty" StringValue.
+     * <p>
+     * For WORD token: Looks up the variable by name from the token and pushes
+     * its index to the stack for use by fetch (@) and store (!) operations.
      *
-     * @throws Exception as any execution error found during execution
+     * @throws Exception if variable is not found (for WORD token) or already defined (for VARIABLE token)
      */
     @Override
     public void execute() throws Exception {
         try {
-            switch (_oToken.getType()) {
-                case STORE:
-                    break;
-                case FETCH:
-                    break;
-                case TWO_STORE:
-                    break;
-                case TWO_FETCH:
-                    break;
-                case CHAR_STORE:
-                    break;
-                case CHAR_FETCH:
-                    break;
-                case VARIABLE:
-                    if (_strVariableName != null) {
-                        _oVariables.define(_strVariableName);
-                    } else {
-                        throw (new RuntimeException("Variable name should have been provided"));
-                    }
-                    break;
-                case WORD:
-                    Stack oStack = new Stack();
-                    int iIndex = _oVariables.index(_oToken.getText());
-                    oStack.push(new IntegerValue(iIndex));
-                    break;
-                default:
-                    throw new ArithmeticException("Unknown token type in variable statement");
+            if (_strVariableName != null) {
+                // VARIABLE token: define a new variable
+                _oVariables.define(_strVariableName);
+            } else {
+                // WORD token: access existing variable by name from token
+                String variableName = _oToken.getText();
+                int variableIndex = _oVariables.index(variableName);
+                Stack oStack = new Stack();
+                oStack.push(new IntegerValue(variableIndex));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -81,11 +99,11 @@ public class VariableStatement implements Statement {
     }
 
     /**
-     * Content.
+     * Content - return a human-readable representation of this statement.
      * <p>
      * Method for JUnit to return the content of the statement.
      *
-     * @return gives the name of the statement ("INPUT") and the variable name
+     * @return gives the name of the statement and the variable name
      * @throws Exception based on errors in the implementation classes
      */
     @Override
@@ -94,11 +112,11 @@ public class VariableStatement implements Statement {
     }
 
     /**
-     * Structure.
+     * Structure - return the JSON structure of this statement for compilation/analysis.
      * <p>
      * Method for the compiler to get the structure of the program.
      *
-     * @return gives the name of the statement ("INPUT") and a list of the parameters
+     * @return gives the name of the statement and a list of the parameters
      * @throws Exception based on errors in the implementation classes
      */
     @Override

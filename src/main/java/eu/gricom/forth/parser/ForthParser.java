@@ -9,6 +9,7 @@ import eu.gricom.forth.statements.arithmetics.*;
 import eu.gricom.forth.statements.comparison.*;
 import eu.gricom.forth.statements.inOut.*;
 import eu.gricom.forth.statements.stack.*;
+import eu.gricom.forth.statements.variables.FetchStatement;
 import eu.gricom.forth.statements.variables.StoreStatement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.tokenizer.Token;
@@ -17,14 +18,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This defines the Forth parser. The parser takes in a sequence of tokens
- * and generates sequence of executable classes. Forth is a light weight
- * programming language, which makes the parser simple and short. The idea is
- * to use the least number of predefined functions and build a lot of them
- * in Forth itself. They can be loaded before or during the execution.
- * In technical terms, what we have is a recursive descent parser, the
- * simplest kind to hand-write.
+ * ForthParser - Recursive descent parser for the FORTH language.
  * <p>
+ * The ForthParser takes a sequence of tokens and generates a sequence of executable
+ * Statement objects. FORTH is a lightweight programming language, so the parser is simple
+ * and short. The design philosophy is to use the least number of predefined functions
+ * and build a lot of them in FORTH itself, which can be loaded before or during execution.
+ * <p>
+ * Variable Handling Architecture:
+ * The parser uses a dual-class design for variable operations:
+ * - VARIABLE token (definition): Creates VariableStatement(token, position, variableName)
+ *   This defines a new variable and initializes it to "empty" in the Variables storage.
+ * - WORD token (access): Creates WordStatement(token, position)
+ *   This accesses a previously defined variable by looking up its index and pushing to stack.
+ * <p>
+ * Both VariableStatement and WordStatement interact with the shared Variables storage
+ * (static dual-storage architecture using _astrVariableName list and _aoVariable map).
+ * <p>
+ * Token Processing:
+ * The parser processes tokens in a switch statement (recursive descent style):
+ * - Arithmetic operators: +, -, *, /, MOD
+ * - Comparison operators: =, <>, <, >, <=, >=, 0=, 0<>, 0<, 0>
+ * - Stack operations: DUP, DROP, SWAP, OVER, ROT, NIP, TUCK, PICK, ROLL, DEPTH
+ * - I/O operations: PRINT (.), PRINT KEEP STACK (.S), CARRIAGE_RETURN (CR), QUESTION (?)
+ * - Variable operations: VARIABLE (definition), WORD (access/reference)
+ * - Memory operations: FETCH (@), STORE (!), and character variants (2@, 2!, C@, C!)
+ * - Number literals: Push to stack
+ * <p>
+ * In technical terms, this is a recursive descent parser, the simplest kind to hand-write.
+ * <p>
+ * (c) = 2026,.., by Andreas Grimm, The Netherlands / Norway
  */
 public class ForthParser implements Parser {
     private final Logger _oLogger = new Logger(this.getClass().getName());
@@ -86,7 +109,16 @@ public class ForthParser implements Parser {
 */
                 // Variable Statements
                 case STORE:
+                case TWO_STORE:
+                case CHAR_STORE:
                     aoStatements.add(new StoreStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case FETCH:
+                case TWO_FETCH:
+                case CHAR_FETCH:
+                    aoStatements.add(new FetchStatement(getToken(0).getType(), _iPosition));
                     _iPosition++;
                     break;
 
@@ -98,6 +130,13 @@ public class ForthParser implements Parser {
 
                 case PRINT:
                     aoStatements.add(new PrintStatement(getToken(0), _iPosition));
+                    _iPosition++;
+                    break;
+
+                // Question operator: Debugging operator that fetches and prints a variable value
+                // Stack: ( address -- ) - Pops variable address, fetches and prints value
+                case QUESTION:
+                    aoStatements.add(new QuestionStatement(getToken(0), _iPosition));
                     _iPosition++;
                     break;
 
@@ -269,14 +308,19 @@ public class ForthParser implements Parser {
                     _iPosition++;
                     break;
 
+                // Variable Definition: VARIABLE token creates a new variable
+                // Syntax: VARIABLE variableName
+                // The next token contains the variable name; both are consumed.
                 case VARIABLE:
                     String strVariableName = getToken(1).getText();
                     aoStatements.add(new VariableStatement(getToken(0),_iPosition,strVariableName));
                     _iPosition = _iPosition + 2;
                     break;
 
+                // Variable Access: WORD token accesses a previously defined variable
+                // Pushes the variable's index to the stack for use with FETCH (@) and STORE (!)
                 case WORD:
-                    aoStatements.add(parseWordStatement());
+                    aoStatements.add(new WordStatement(getToken(0),_iPosition));
                     _iPosition++;
                     break;
 
@@ -339,26 +383,6 @@ public class ForthParser implements Parser {
         }
 
         return new NumberStatement(iNumber, _iPosition);
-    }
-
-    /**
-     * Parse a PRINT statement.
-     *
-     * @return the parsed PrintStatement
-     * @throws SyntaxErrorException if parsing fails
-     */
-    private Statement parsePrintStatement() throws SyntaxErrorException {
-        return new PrintStatement(getToken(0), _iPosition);
-    }
-
-    private Statement parseWordStatement() throws SyntaxErrorException {
-        Variables oVariables = new Variables();
-
-        if (oVariables.isVariable(getToken(0).getText())) {
-            return (new VariableStatement(getToken(0), _iPosition));
-        }
-
-        throw new SyntaxErrorException("Word not identified: " + getToken(0).getText());
     }
 
     /**

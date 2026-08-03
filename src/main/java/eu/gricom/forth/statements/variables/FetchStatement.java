@@ -9,33 +9,31 @@ import eu.gricom.forth.variableTypes.Value;
 /**
  * FetchStatement.java
  * <p>
- * Description: The FetchStatement class implements Forth's memory store operations (@, 2@, C@).
- * It retrieves a value from a variable and stores the result on the stack.
- * Supports single-cell storage (!), double-cell storage (2!), and character storage (C!).
+ * Description: The FetchStatement class implements Forth's memory fetch operations (@, 2@, C@).
+ * It retrieves a value from a variable at a given index and pushes the result onto the stack.
+ * Supports single-cell fetch (@), double-cell fetch (2@), and character fetch (C@).
  * <p>
- * Stack behavior: ( value address -- ) or ( d address -- ) for double-cell
+ * Stack behavior: ( address -- value ) - Pops address, pushes value at that address
  * <p>
  * (c) = 2026,.., by Andreas Grimm, The Netherlands / Norway
  */
 public class FetchStatement implements Statement {
-    // Token type indicating which store operation (@, 2@, C@)
+    // Token type indicating which fetch operation (@, 2@, C@)
     private final ForthTokenType _oTokenType;
     // Token position in the source code
     private final int _iTokenNumber;
-    private final String _strSearchString;
 
     /**
      * Constructor.
      * <p>
-     * Initializes a StoreStatement with the specific token type and its position.
+     * Initializes a FetchStatement with the specific token type and its position.
      *
-     * @param oForthTokenType The token type (STORE, TWO_STORE, or CHAR_STORE)
+     * @param oForthTokenType The token type (FETCH, TWO_FETCH, or CHAR_FETCH)
      * @param iTokenNumber    The position/number of this token in the source code
      */
-    public FetchStatement(ForthTokenType oForthTokenType, int iTokenNumber, String strSearchString) {
+    public FetchStatement(ForthTokenType oForthTokenType, int iTokenNumber) {
         _oTokenType = oForthTokenType;
         _iTokenNumber = iTokenNumber;
-        _strSearchString = strSearchString;
     }
 
     /**
@@ -52,11 +50,12 @@ public class FetchStatement implements Statement {
     }
 
     /**
-     * Execute the store operation.
+     * Execute the fetch operation.
      * <p>
-     * Pops a memory address and a value from the stack, then stores the value
-     * at the specified address in the Variables storage. The operation type
-     * determines whether single-cell, double-cell, or character storage is used.
+     * Pops a memory address (variable index) from the stack, retrieves the value
+     * stored at that address in the Variables storage, and pushes it back onto the stack.
+     * The operation type determines whether single-cell, double-cell, or character fetch
+     * is performed.
      *
      * @throws Exception as any execution error found during execution (empty stack, invalid address)
      */
@@ -68,11 +67,8 @@ public class FetchStatement implements Statement {
         // Pop the address (variable index) from the stack
         int iIndex = oStack.pop().toInteger();
 
-        // Store the value at the specified variable index
-        Value oValue = oVariables.get(_strSearchString);
-
-        // Pop the value to be stored
-        oStack.push(oValue);
+        // Fetch the value at the specified variable index and push to stack
+        oVariables.get(iIndex);
     }
 
     /**
@@ -81,7 +77,7 @@ public class FetchStatement implements Statement {
      * This method is used in testing and debugging to display the statement's
      * type in a readable format.
      *
-     * @return A string describing the store operation type (e.g., "STORE", "2STORE", "CSTORE")
+     * @return A string describing the fetch operation type (e.g., "FETCH", "2FETCH", "CFETCH")
      * @throws Exception based on errors in the implementation classes
      */
     @Override
@@ -103,8 +99,7 @@ public class FetchStatement implements Statement {
         // Build JSON structure with statement information
         String strReturn = "{\"FETCH\": {";
         strReturn += "\"TOKEN_NR\": \"" + _iTokenNumber + "\",";
-        strReturn += "\"TOKEN_TYPE\": \"" + _oTokenType.toString() + "\",";
-        strReturn += "\"SEARCH_STRING\": \"" + _strSearchString + "\"";
+        strReturn += "\"TOKEN_TYPE\": \"" + _oTokenType.toString() + "\"";
         strReturn += "}}";
         return strReturn;
     }
