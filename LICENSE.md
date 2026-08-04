@@ -1,6 +1,6 @@
 This is the License File of the Project:
 
-# GriCom Diminutive BASIC Interpreter (GDBI), License
+# GriCom Diminutive FORTH Interpreter (GDF), License
 
 ---
 

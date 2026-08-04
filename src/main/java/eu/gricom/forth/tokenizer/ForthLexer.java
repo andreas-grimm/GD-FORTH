@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * ForthLexer.java
  * <p>
- * Description: The ForthLexer class implements the Lexer interface for BASIC source code. It scans the input character
+ * Description: The ForthLexer class implements the Lexer interface for FORTH source code. It scans the input character
  * by character, recognising keywords, identifiers, numbers, strings, and operators, and produces a list of Token
  * objects for the parser to consume.
  * <p>
@@ -145,7 +145,7 @@ public class ForthLexer implements Lexer {
     }
 
     /**
-     * isBoolean identifies a boolean in the BASIC program by the keywords "TRUE" and "FALSE".
+     * isBoolean identifies a boolean in the FORTH program by the keywords "TRUE" and "FALSE".
      *
      * @param strWord argument for the check
      * @return true if argument is a boolean
@@ -156,7 +156,7 @@ public class ForthLexer implements Lexer {
     }
 
     /**
-     * isString identifies a string in the BASIC program by the trailing quotation marks (").
+     * isString identifies a string in the FORTH program by the trailing quotation marks (").
      *
      * @param strWord argument for the check
      * @return true if argument is a string

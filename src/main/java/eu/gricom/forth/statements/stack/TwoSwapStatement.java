@@ -1,14 +1,15 @@
-package eu.gricom.forth.statements;
+package eu.gricom.forth.statements.stack;
 
 
-import eu.gricom.forth.Forth;
 import eu.gricom.forth.helper.ConsoleColors;
 import eu.gricom.forth.helper.Printer;
 import eu.gricom.forth.memoryManager.Stack;
+import eu.gricom.forth.statements.Statement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.variableTypes.IntegerValue;
+import eu.gricom.forth.variableTypes.Value;
 
-public class ArithmeticStatement implements Statement {
+public class TwoSwapStatement implements Statement {
     private final ForthTokenType _oTokenType;
     private final int  _iTokenNumber;
 
@@ -18,8 +19,8 @@ public class ArithmeticStatement implements Statement {
      * @param oForthTokenType - to determine the function to be executed
      * @param iTokenNumber - the number of this token related to this statement
      */
-    public ArithmeticStatement(final ForthTokenType oForthTokenType,
-                           final int iTokenNumber) {
+    public TwoSwapStatement(final ForthTokenType oForthTokenType,
+                            final int iTokenNumber) {
         _oTokenType = oForthTokenType;
         _iTokenNumber = iTokenNumber;
     }
@@ -46,32 +47,14 @@ public class ArithmeticStatement implements Statement {
         Stack oStack = new Stack();
 
         try {
-            int iInteger_1 = oStack.pop().toInteger();
-            int iInteger_2 = oStack.pop().toInteger();
-            int iResult = 0;
-
-            switch (_oTokenType) {
-                case PLUS:
-                    iResult = iInteger_2 + iInteger_1;
-                    break;
-                case MINUS:
-                    iResult = iInteger_2 - iInteger_1;
-                    break;
-                case MULTIPLY:
-                    iResult = iInteger_2 * iInteger_1;
-                    break;
-                case DIVIDE:
-                    iResult = iInteger_2 / iInteger_1;
-                    break;
-                case MOD:
-                    iResult = iInteger_2 % iInteger_1;
-                    break;
-                default:
-                    throw new ArithmeticException("Unknown token type in calculation");
-            }
-
-            oStack.push(new IntegerValue(iResult));
-
+            Value oValue_1_1 = oStack.pop();
+            Value oValue_1_2 = oStack.pop();
+            Value oValue_2_1 = oStack.pop();
+            Value oValue_2_2 = oStack.pop();
+            oStack.push(oValue_1_2);
+            oStack.push(oValue_1_1);
+            oStack.push(oValue_2_2);
+            oStack.push(oValue_2_1);
         } catch (Exception eException) {
             Printer.println(ConsoleColors.RED + eException.getMessage() + ConsoleColors.RESET);
         }

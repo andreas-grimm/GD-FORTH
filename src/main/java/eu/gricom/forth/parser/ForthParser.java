@@ -3,7 +3,15 @@ package eu.gricom.forth.parser;
 import eu.gricom.forth.error.SyntaxErrorException;
 import eu.gricom.forth.helper.Logger;
 import eu.gricom.forth.memoryManager.LineNumberXRef;
+import eu.gricom.forth.memoryManager.Variables;
 import eu.gricom.forth.statements.*;
+import eu.gricom.forth.statements.arithmetics.*;
+import eu.gricom.forth.statements.comparison.*;
+import eu.gricom.forth.statements.inOut.*;
+import eu.gricom.forth.statements.mathematics.*;
+import eu.gricom.forth.statements.stack.*;
+import eu.gricom.forth.statements.variables.FetchStatement;
+import eu.gricom.forth.statements.variables.StoreStatement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.tokenizer.Token;
 
@@ -11,14 +19,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This defines the Forth parser. The parser takes in a sequence of tokens
- * and generates sequence of executable classes. Forth is a light weight
- * programming language, which makes the parser simple and short. The idea is
- * to use the least number of predefined functions and build a lot of them
- * in Forth itself. They can be loaded before or during the execution.
- * In technical terms, what we have is a recursive descent parser, the
- * simplest kind to hand-write.
+ * ForthParser - Recursive descent parser for the FORTH language.
  * <p>
+ * The ForthParser takes a sequence of tokens and generates a sequence of executable
+ * Statement objects. FORTH is a lightweight programming language, so the parser is simple
+ * and short. The design philosophy is to use the least number of predefined functions
+ * and build a lot of them in FORTH itself, which can be loaded before or during execution.
+ * <p>
+ * Variable Handling Architecture:
+ * The parser uses a dual-class design for variable operations:
+ * - VARIABLE token (definition): Creates VariableStatement(token, position, variableName)
+ *   This defines a new variable and initializes it to "empty" in the Variables storage.
+ * - WORD token (access): Creates WordStatement(token, position)
+ *   This accesses a previously defined variable by looking up its index and pushing to stack.
+ * <p>
+ * Both VariableStatement and WordStatement interact with the shared Variables storage
+ * (static dual-storage architecture using _astrVariableName list and _aoVariable map).
+ * <p>
+ * Token Processing:
+ * The parser processes tokens in a switch statement (recursive descent style):
+ * - Arithmetic operators: +, -, *, /, MOD
+ * - Comparison operators: =, <>, <, >, <=, >=, 0=, 0<>, 0<, 0>
+ * - Stack operations: DUP, DROP, SWAP, OVER, ROT, NIP, TUCK, PICK, ROLL, DEPTH
+ * - I/O operations: PRINT (.), PRINT KEEP STACK (.S), CARRIAGE_RETURN (CR), QUESTION (?)
+ * - Variable operations: VARIABLE (definition), WORD (access/reference)
+ * - Memory operations: FETCH (@), STORE (!), and character variants (2@, 2!, C@, C!)
+ * - Number literals: Push to stack
+ * <p>
+ * In technical terms, this is a recursive descent parser, the simplest kind to hand-write.
+ * <p>
+ * (c) = 2026,.., by Andreas Grimm, The Netherlands / Norway
  */
 public class ForthParser implements Parser {
     private final Logger _oLogger = new Logger(this.getClass().getName());
@@ -78,11 +108,41 @@ public class ForthParser implements Parser {
                     _iPosition++;
                     break;
 */
+                // Variable Statements
+                case STORE:
+                case TWO_STORE:
+                case CHAR_STORE:
+                    aoStatements.add(new StoreStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case FETCH:
+                case TWO_FETCH:
+                case CHAR_FETCH:
+                    aoStatements.add(new FetchStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
                 // PRINT Token: print to the terminal
                 case CARRIAGE_RETURN:
+                    aoStatements.add(new CarriageReturnStatement(getToken(0), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case PRINT:
+                    aoStatements.add(new PrintStatement(getToken(0), _iPosition));
+                    _iPosition++;
+                    break;
+
+                // Question operator: Debugging operator that fetches and prints a variable value
+                // Stack: ( address -- ) - Pops variable address, fetches and prints value
+                case QUESTION:
+                    aoStatements.add(new QuestionStatement(getToken(0), _iPosition));
+                    _iPosition++;
+                    break;
+
                 case PRINT_KEEP_STACK:
-                    aoStatements.add(parsePrintStatement());
+                    aoStatements.add(new PrintKeepStackStatement(getToken(0), _iPosition));
                     _iPosition++;
                     break;
 
@@ -94,13 +154,227 @@ public class ForthParser implements Parser {
 
                 // Multiple Tokens: Can be one of these: +, - , *, /, MOD
                 case PLUS:
-                case MINUS:
-                case MULTIPLY:
-                case DIVIDE:
-                case MOD:
-                    aoStatements.add(parseArithmeticStatement());
+                    aoStatements.add(new PlusStatement(getToken(0).getType(), _iPosition));
                     _iPosition++;
                     break;
+
+                case MINUS:
+                    aoStatements.add(new MinusStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case MULTIPLY:
+                    aoStatements.add(new MultiplyStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case DIVIDE:
+                    aoStatements.add(new DivideStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case MOD:
+                    aoStatements.add(new ModuloStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case ONE_MINUS:
+                    aoStatements.add(new OneMinusStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case ONE_PLUS:
+                    aoStatements.add(new OnePlusStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+
+                case TWO_DIVIDE:
+                    aoStatements.add(new TwoDivideStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+
+                case TWO_MULTIPLY:
+                    aoStatements.add(new TwoMultiplyStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+
+                // Multiple Tokens: Can be one of these: =, <, > , <>, <=, >=
+                case EQUALS:
+                    aoStatements.add(new EqualsStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case LESS_THAN:
+                    aoStatements.add(new LessThanStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case GREATER_THAN:
+                    aoStatements.add(new GreaterThanStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case NOT_EQUALS:
+                    aoStatements.add(new NotEqualsStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case LESS_EQUAL:
+                    aoStatements.add(new LessEqualStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case GREATER_EQUAL:
+                    aoStatements.add(new GreaterEqualStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case DOUBLE_ZERO_EQUALS:
+                case ZERO_EQUALS:
+                    aoStatements.add(new ZeroEqualsStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case DOUBLE_ZERO_LESS:
+                case ZERO_LESS:
+                    aoStatements.add(new ZeroLessStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case ZERO_GREATER:
+                    aoStatements.add(new ZeroGreaterStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case ZERO_NOT_EQUALS:
+                    aoStatements.add(new ZeroNotEqualsStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case DUPE:
+                    aoStatements.add(new DupeStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case QUESTION_DUPE:
+                    aoStatements.add(new QuestionDupeStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case DROP:
+                    aoStatements.add(new DropStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case TWO_DROP:
+                    aoStatements.add(new TwoDropStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case SWAP:
+                    aoStatements.add(new SwapStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case TWO_SWAP:
+                    aoStatements.add(new TwoSwapStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case OVER:
+                    aoStatements.add(new OverStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case TWO_OVER:
+                    aoStatements.add(new TwoOverStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case ROT:
+                    aoStatements.add(new RotStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case TWO_ROT:
+                    aoStatements.add(new TwoRotStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case MINUS_ROT:
+                    aoStatements.add(new MinusRotStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case NIP:
+                    aoStatements.add(new NipStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case TUCK:
+                    aoStatements.add(new TuckStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case PICK:
+                    aoStatements.add(new PickStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case ROLL:
+                    aoStatements.add(new RollStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case DEPTH:
+                    aoStatements.add(new DepthStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case ABS:
+                    aoStatements.add(new AbsStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case MAX:
+                    aoStatements.add(new MaxStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case MIN:
+                    aoStatements.add(new MinStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case NEGATE:
+                    aoStatements.add(new NegateStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case SIGN:
+                    aoStatements.add(new SignStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                // Variable Definition: VARIABLE token creates a new variable
+                // Syntax: VARIABLE variableName
+                // The next token contains the variable name; both are consumed.
+                case VARIABLE:
+                    String strVariableName = getToken(1).getText();
+                    aoStatements.add(new VariableStatement(getToken(0),_iPosition,strVariableName));
+                    _iPosition = _iPosition + 2;
+                    break;
+
+                // Variable Access: WORD token accesses a previously defined variable
+                // Pushes the variable's index to the stack for use with FETCH (@) and STORE (!)
+                case WORD:
+                    aoStatements.add(new WordStatement(getToken(0),_iPosition));
+                    _iPosition++;
+                    break;
+
                 // No Token identified, Syntax Error
                 default:
                     throw new SyntaxErrorException("Incorrect Command: " + getToken(0).getLine() + ": ["
@@ -160,20 +434,6 @@ public class ForthParser implements Parser {
         }
 
         return new NumberStatement(iNumber, _iPosition);
-    }
-
-    private Statement parseArithmeticStatement() {
-        return new ArithmeticStatement(getToken(0).getType(), _iPosition);
-    }
-
-    /**
-     * Parse a PRINT statement.
-     *
-     * @return the parsed PrintStatement
-     * @throws SyntaxErrorException if parsing fails
-     */
-    private Statement parsePrintStatement() throws SyntaxErrorException {
-        return new PrintStatement(getToken(0), _iPosition);
     }
 
     /**

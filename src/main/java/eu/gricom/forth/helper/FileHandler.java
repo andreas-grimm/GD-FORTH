@@ -7,7 +7,7 @@ import java.nio.charset.Charset;
 /**
  * FileHandler.java
  * <p>
- * Description: The FileHandler class provides utility methods for reading BASIC source code files from the file
+ * Description: The FileHandler class provides utility methods for reading FORTH source code files from the file
  * system. It loads the entire file content into a single string for subsequent tokenisation and parsing by the
  * interpreter.
  * <p>

@@ -148,8 +148,8 @@ public class StringValue implements Value {
 
     @Override
     public final Value smallerEqualThan(final Value oValue) throws SyntaxErrorException {
-        if (Objects.equals(equals(oValue).toString(), "True")
-                || Objects.equals(smallerThan(oValue).toString(), "True")) {
+        if (Objects.equals(equals(oValue).toString(), "TRUE")
+                || Objects.equals(smallerThan(oValue).toString(), "TRUE")) {
             return new BooleanValue(true);
         } else {
             return new BooleanValue(false);
@@ -171,8 +171,8 @@ public class StringValue implements Value {
 
     @Override
     public final Value largerEqualThan(final Value oValue) throws SyntaxErrorException {
-        if (Objects.equals(equals(oValue).toString(), "True")
-                || Objects.equals(largerThan(oValue).toString(), "True")) {
+        if (Objects.equals(equals(oValue).toString(), "TRUE")
+                || Objects.equals(largerThan(oValue).toString(), "TRUE")) {
             return new BooleanValue(true);
         } else {
             return new BooleanValue(false);

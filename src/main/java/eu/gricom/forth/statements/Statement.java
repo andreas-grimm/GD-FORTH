@@ -3,7 +3,7 @@ package eu.gricom.forth.statements;
 /**
  * Statement.java
  * <p>
- * Description: The Statement interface defines the contract that all BASIC statement implementations must follow. It
+ * Description: The Statement interface defines the contract that all FORTH statement implementations must follow. It
  * declares methods for execution, code generation, and accessing the token number for error reporting and navigation.
  * <p>
  * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway

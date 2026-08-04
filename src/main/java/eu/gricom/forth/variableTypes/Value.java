@@ -7,7 +7,7 @@ import eu.gricom.forth.statements.Expression;
 /**
  * Value.java
  * <p>
- * Description: The Value interface is the base type for all data values in the BASIC interpreter. It defines the
+ * Description: The Value interface is the base type for all data values in the FORTH interpreter. It defines the
  * contract for arithmetic operations, comparisons, and type conversions between different value types (string,
  * integer, real, long, boolean). By extending Expression, values can also serve as literal expressions in the AST.
  * <p>

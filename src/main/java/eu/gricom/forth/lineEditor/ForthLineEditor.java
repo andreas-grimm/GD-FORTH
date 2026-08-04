@@ -7,6 +7,7 @@ import eu.gricom.forth.helper.Printer;
 import eu.gricom.forth.memoryManager.Directory;
 import eu.gricom.forth.memoryManager.Program;
 import eu.gricom.forth.memoryManager.Stack;
+import eu.gricom.forth.memoryManager.Variables;
 import eu.gricom.forth.parser.ForthParser;
 import eu.gricom.forth.runtimeManager.Execute;
 import eu.gricom.forth.tokenizer.ForthLexer;
@@ -84,21 +85,11 @@ public class ForthLineEditor {
                     case "QUIT":
                         bExit = true;
                         break;
-                    case "LIST":
-                        String[] astrProgramLines = _oProgram.getProgram().split("\\s*\n\\s*");
-                        int iLineNumber = 0;
-                        for (String strProgramLine: astrProgramLines) {
-                            Printer.print(ConsoleColors.YELLOW + ++iLineNumber + "> " + ConsoleColors.RESET);
-                            Printer.println(strProgramLine);
-                        }
-                        break;
-                    case "RUN":
+                    case "RERUN":
                         run();
                         break;
-                    case "STACK":
-                        Stack oStack = new Stack();
-                        String strStackContent = oStack.retrieveContent();
-                        Printer.println(strStackContent);
+                    case "SHOW":
+                        show(strLine);
                         break;
                     case "DELETE":
                         deleteLines(strLine);
@@ -268,6 +259,78 @@ public class ForthLineEditor {
     }
 
     /**
+     * Parse and execute the SHOW command with support for multiple parameters.
+     *
+     * Syntax: SHOW                              - Display VARIABLES, STACK, and PROGRAM
+     *         SHOW VARIABLES                    - Display only VARIABLES
+     *         SHOW STACK                        - Display only STACK
+     *         SHOW PROGRAM                      - Display only PROGRAM
+     *         SHOW VARIABLES STACK              - Display VARIABLES and STACK
+     *         SHOW STACK PROGRAM                - Display STACK and PROGRAM
+     *         SHOW VARIABLES PROGRAM STACK      - Display all three (order independent)
+     *
+     * @param strLine The complete command line including "SHOW" and optional parameters
+     */
+    private void show(String strLine) {
+        String[] astrWords = strLine.trim().split("\\s+");
+
+        boolean bShowVariables = true;
+        boolean bShowStack = true;
+        boolean bShowProgram = true;
+
+        if (astrWords.length > 1) {
+            // If any parameter is provided, start with all false
+            bShowVariables = false;
+            bShowStack = false;
+            bShowProgram = false;
+
+            // Process all words after "SHOW"
+            for (int i = 1; i < astrWords.length; i++) {
+                String strWord = astrWords[i].toUpperCase();
+                if (strWord.equals("VARIABLES")) {
+                    bShowVariables = true;
+                } else if (strWord.equals("STACK")) {
+                    bShowStack = true;
+                } else if (strWord.equals("PROGRAM")) {
+                    bShowProgram = true;
+                }
+            }
+        }
+        // If no second word, all flags remain true (show all)
+
+        if (bShowProgram) {
+            Printer.println(ConsoleColors.GREEN + "Display programming history:");
+            String strProgram = _oProgram.getProgram();
+            if (strProgram != null && !strProgram.isEmpty()) {
+                String[] astrProgramLines = strProgram.split("\\s*\n\\s*");
+                int iLineNumber = 0;
+                for (String strProgramLine: astrProgramLines) {
+                    Printer.print(ConsoleColors.YELLOW + ++iLineNumber + "> " + ConsoleColors.RESET);
+                    Printer.println(strProgramLine);
+                }
+            }
+            Printer.println(ConsoleColors.RESET);
+        }
+
+        if (bShowVariables) {
+            Printer.println(ConsoleColors.GREEN + "Declared and used variables:");
+            Variables oVariables = new Variables();
+            String strVariables = oVariables.retrieveContent();
+            Printer.print(strVariables);
+            Printer.println(ConsoleColors.RESET);
+        }
+
+        // Display STACK if requested
+        if (bShowStack) {
+            Printer.println(ConsoleColors.GREEN + "Content of the stack:");
+            Stack oStack = new Stack();
+            String strStackContent = oStack.retrieveContent();
+            Printer.println(strStackContent);
+            Printer.println(ConsoleColors.RESET);
+        }
+    }
+
+    /**
      * Parse and execute the SAVE command.
      *
      * Syntax: SAVE filename
@@ -281,14 +344,15 @@ public class ForthLineEditor {
             Printer.println("SAVE: missing filename");
             return;
         }
-/*
+
         try {
             _oProgram.save(strRemainder);
             Printer.println("Program saved to " + strRemainder);
         } catch (eu.gricom.forth.error.FileAlreadyExistsException e) {
             Printer.println("SAVE error: " + e.getMessage());
+        } catch (java.io.IOException e) {
+            Printer.println("SAVE error: I/O exception - " + e.getMessage());
         }
- */
     }
 
     /**

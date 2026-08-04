@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 /**
  * ForthReservedWords.java
  * <p>
- * Description: The ForthReservedWords class maintains the dictionary of all BASIC language keywords and their corresponding
+ * Description: The ForthReservedWords class maintains the dictionary of all FORTH language keywords and their corresponding
  * token types. During lexical analysis, the lexer uses this class to identify whether a word is a reserved keyword
- * (such as PRINT, GOTO, IF) or a user-defined identifier.
+ * (such as DUP, DROP, SWAP) or a user-defined identifier.
  * <p>
  * (c) = 2020,.., by Andreas Grimm, The Netherlands / Norway
  */
@@ -20,7 +20,7 @@ public final class ForthReservedWords {
     private ForthReservedWords() { }
 
     /**
-     * This defines the different kinds of tokens for the Dartmouth BASIC styles.
+     * This defines the different kinds of tokens for the FORTH language standard.
      */
     private final static String[] _astrReservedWords = {
             "!",
@@ -34,15 +34,15 @@ public final class ForthReservedWords {
             "/", "/MOD", "/STRING",
             "0<", "0<>", "0=", "0>",
             "1+", "1-",
-            "2!", "2*", "2/", "2>R",
+            "2!", "2*", "2/", /*"2>R",*/
             "2@", "2CONSTANT", "2DROP", "2DUP",
-            "2LITERAL", "2OVER", "2R>", "2R@",
+            "2LITERAL", "2OVER", /*"2R>",*/ /*"2R@",*/
             "2ROT", "2SWAP", "2VALUE", "2VARIABLE",
             ":", ":NONAME",
             ";", ";CODE",
             "<", "<#", "<>", "=",
-            ">",
-            ">BODY", ">FLOAT", ">IN", ">NUMBER", ">R",
+            ">", "<=", ">=",
+            ">BODY", ">FLOAT", ">IN", ">NUMBER", /*">R",*/
             "?", "?DO", "?DUP", "@",
             "ABORT", "ABORT\"", "ABS", "ACCEPT", "ACTION-OF",
             "AGAIN", "AHEAD", "ALIGN", "ALIGNED", "ALLOCATE",
@@ -102,16 +102,16 @@ public final class ForthReservedWords {
             "LOOP", "LSHIFT",
             "M*", "M*/", "M+", "MARKER", "MAX",
             "MIN", "MOD", "MOVE", "MS",
-            "N>R", "NAME>COMPILE", "NAME>INTERPRET", "NAME>STRING",
-            "NEGATE", "NIP", "NR>",
-            "OF", "ONLY", "OPEN_FILE", "ORDER", "OVER",
+            /*"N>R",*/ "NAME>COMPILE", "NAME>INTERPRET", "NAME>STRING",
+            "NEGATE", "NIP", /*"NR>",*/
+            "OF", "ONLY", "OPEN_FILE", "OR", "ORDER", "OVER",
             "PAD", "PAGE", "PARSE", "PARSE-NAME", "PICK",
             "POSTPONE", "PRECISION", "PREVIOUS", "QUIT",
-            "R/O", "R/W", "R>", "R@", "READ-FILE",
+            "R/O", "R/W", /*"R>",*/ /*"R@",*/ "READ-FILE",
             "READ-LINE", "RECURSE", "REFILL", "RENAME-FILE",
             "REPEAT", "REPLACES", "REPOSITION-FILE", "REPRESENT",
             "REQUIRE", "REQUIRED", "RESIZE", "RESIZE-FILE", "RESTORE-INPUT",
-            "ROLL", "ROT", "RSHIFT",
+            "ROLL", "ROT", "-ROT", "RSHIFT",
             "S\"", "S>D", "S>F", "SAVE-BUFFERS", "SAVE-INPUT",
             "SCR", "SEARCH", "SEARCH-WORDLIST", "SEE", "SET-CURRENT",
             "SET-ORDER", "SET-PRECISION", "SF!", "SF@",
@@ -148,15 +148,15 @@ public final class ForthReservedWords {
             ForthTokenType.DIVIDE, ForthTokenType.SLASH_MOD, ForthTokenType.SLASH_STRING,
             ForthTokenType.ZERO_LESS, ForthTokenType.ZERO_NOT_EQUALS, ForthTokenType.ZERO_EQUALS, ForthTokenType.ZERO_GREATER,
             ForthTokenType.ONE_PLUS, ForthTokenType.ONE_MINUS,
-            ForthTokenType.TWO_STORE, ForthTokenType.TWO_STAR, ForthTokenType.TWO_SLASH, ForthTokenType.TWO_TO_R,
+            ForthTokenType.TWO_STORE, ForthTokenType.TWO_MULTIPLY, ForthTokenType.TWO_DIVIDE, /*ForthTokenType.TWO_TO_R,*/
               ForthTokenType.TWO_FETCH, ForthTokenType.TWO_CONSTANT, ForthTokenType.TWO_DROP, ForthTokenType.TWO_DUPE,
-              ForthTokenType.TWO_LITERAL, ForthTokenType.TWO_OVER, ForthTokenType.TWO_R_FROM, ForthTokenType.TWO_R_FETCH,
-              ForthTokenType.TWO_ROTE, ForthTokenType.TWO_SWAP, ForthTokenType.TWO_VALUE, ForthTokenType.TWO_VARIABLE,
+              ForthTokenType.TWO_LITERAL, ForthTokenType.TWO_OVER, /*ForthTokenType.TWO_R_FROM,*/ /*ForthTokenType.TWO_R_FETCH,*/
+              ForthTokenType.TWO_ROT, ForthTokenType.TWO_SWAP, ForthTokenType.TWO_VALUE, ForthTokenType.TWO_VARIABLE,
             ForthTokenType.COLON, ForthTokenType.COLON_NO_NAME,
             ForthTokenType.SEMICOLON, ForthTokenType.SEMICOLON_CODE,
             ForthTokenType.LESS_THAN, ForthTokenType.LESS_NUMBER_SIGN, ForthTokenType.NOT_EQUALS, ForthTokenType.EQUALS,
-              ForthTokenType.GREATER_THAN,
-            ForthTokenType.TO_BODY, ForthTokenType.TO_FLOAT, ForthTokenType.TO_IN, ForthTokenType.TO_NUMBER, ForthTokenType.TO_R,
+              ForthTokenType.GREATER_THAN, ForthTokenType.LESS_EQUAL, ForthTokenType.GREATER_EQUAL,
+            ForthTokenType.TO_BODY, ForthTokenType.TO_FLOAT, ForthTokenType.TO_IN, ForthTokenType.TO_NUMBER, /*ForthTokenType.TO_R,*/
             ForthTokenType.QUESTION, ForthTokenType.QUESTION_DO, ForthTokenType.QUESTION_DUPE, ForthTokenType.FETCH,
             ForthTokenType.ABORT, ForthTokenType.ABORT_QUOTE, ForthTokenType.ABS, ForthTokenType.ACCEPT, ForthTokenType.ACTION_OF,
               ForthTokenType.AGAIN, ForthTokenType.AHEAD, ForthTokenType.ALIGN, ForthTokenType.ALIGNED, ForthTokenType.ALLOCATE,
@@ -164,20 +164,20 @@ public final class ForthReservedWords {
             ForthTokenType.BASE, ForthTokenType.BEGIN, ForthTokenType.BEGIN_STRUCTURE, ForthTokenType.BIN, ForthTokenType.BL,
               ForthTokenType.BLANK, ForthTokenType.BLK, ForthTokenType.BLOCK, ForthTokenType.BUFFER, ForthTokenType.BUFFER_COLON,
               ForthTokenType.BYE,
-            ForthTokenType.C_STORE, ForthTokenType.C_QUOTE, ForthTokenType.C_COMMA, ForthTokenType.C_FETCH,
+            ForthTokenType.CHAR_STORE, ForthTokenType.C_QUOTE, ForthTokenType.C_COMMA, ForthTokenType.CHAR_FETCH,
               ForthTokenType.CASE, ForthTokenType.CATCH, ForthTokenType.CELL_PLUS, ForthTokenType.CELLS,
               ForthTokenType.CFIELD_COLON, ForthTokenType.CHAR, ForthTokenType.CHAR_PLUS, ForthTokenType.CHARS,
               ForthTokenType.CLOSE_FILE, ForthTokenType.C_MOVE, ForthTokenType.C_MOVE_UP, ForthTokenType.CODE,
               ForthTokenType.COMPARE, ForthTokenType.COMPILE_COMMA, ForthTokenType.CONSTANT, ForthTokenType.COUNT,
               ForthTokenType.CARRIAGE_RETURN, ForthTokenType.CREATE, ForthTokenType.CREATE_FILE, ForthTokenType.C_S_PICK,
               ForthTokenType.C_S_ROLL,
-            ForthTokenType.D_PLUS, ForthTokenType.D_MINUS, ForthTokenType.D_DOT, ForthTokenType.D_DOT_R, ForthTokenType.D_ZERO_LESS,
-              ForthTokenType.D_ZERO_EQUALS, ForthTokenType.D_TWO_STAR, ForthTokenType.D_TWO_SLASH, ForthTokenType.D_LESS_THAN,
-              ForthTokenType.D_EQUALS, ForthTokenType.D_TO_F, ForthTokenType.D_TO_S, ForthTokenType.D_ABS, ForthTokenType.DECIMAL,
+            ForthTokenType.DOUBLE_PLUS, ForthTokenType.DOUBLE_MINUS, ForthTokenType.D_DOT, ForthTokenType.D_DOT_R, ForthTokenType.DOUBLE_ZERO_LESS,
+              ForthTokenType.DOUBLE_ZERO_EQUALS, ForthTokenType.DOUBLE_TWO_STAR, ForthTokenType.DOUBLE_TWO_SLASH, ForthTokenType.DOUBLE_LESS_THAN,
+              ForthTokenType.DOUBLE_EQUALS, ForthTokenType.D_TO_F, ForthTokenType.D_TO_S, ForthTokenType.DOUBLE_ABS, ForthTokenType.DECIMAL,
               ForthTokenType.DEFER, ForthTokenType.DEFER_STORE, ForthTokenType.DEFER_FETCH, ForthTokenType.DEFINITIONS,
               ForthTokenType.DELETE_FILE, ForthTokenType.DEPTH, ForthTokenType.D_F_STORE, ForthTokenType.D_F_FETCH,
               ForthTokenType.D_F_ALIGN, ForthTokenType.D_F_ALIGNED, ForthTokenType.D_F_FIELD_COLON, ForthTokenType.D_FLOAT_PLUS,
-              ForthTokenType.D_FLOATS, ForthTokenType.D_MAX, ForthTokenType.D_MIN, ForthTokenType.D_NEGATE, ForthTokenType.DO,
+              ForthTokenType.D_FLOATS, ForthTokenType.DOUBLE_MAX, ForthTokenType.DOUBLE_MIN, ForthTokenType.DOUBLE_NEGATE, ForthTokenType.DO,
               ForthTokenType.DOES, ForthTokenType.DROP, ForthTokenType.D_U_LESS, ForthTokenType.DUMP, ForthTokenType.DUPE,
             ForthTokenType.EDITOR, ForthTokenType.E_KEY, ForthTokenType.E_KEY_TO_CHAR, ForthTokenType.E_KEY_TO_F_KEY,
               ForthTokenType.E_KEY_TO_X_CHAR, ForthTokenType.E_KEY_QUESTION, ForthTokenType.ELSE, ForthTokenType.EMIT,
@@ -218,18 +218,17 @@ public final class ForthReservedWords {
               ForthTokenType.LOOP, ForthTokenType.L_SHIFT,
             ForthTokenType.M_STAR, ForthTokenType.M_STAR_SLASH, ForthTokenType.M_PLUS, ForthTokenType.MARKER, ForthTokenType.MAX,
               ForthTokenType.MIN, ForthTokenType.MOD, ForthTokenType.MOVE, ForthTokenType.MS,
-            ForthTokenType.N_TO_R, ForthTokenType.NAME_TO_COMPILE, ForthTokenType.NAME_TO_INTERPRET, ForthTokenType.NAME_TO_STRING,
-              ForthTokenType.NEGATE, ForthTokenType.NIP, ForthTokenType.N_R_FROM,
-            ForthTokenType.OF, ForthTokenType.ONLY, ForthTokenType.OPEN_FILE, ForthTokenType.OR, ForthTokenType.ORDER,
-              ForthTokenType.OVER,
+            /* ForthTokenType.N_TO_R, */ ForthTokenType.NAME_TO_COMPILE, ForthTokenType.NAME_TO_INTERPRET, ForthTokenType.NAME_TO_STRING,
+              ForthTokenType.NEGATE, ForthTokenType.NIP, /*ForthTokenType.N_R_FROM,*/
+            ForthTokenType.OF, ForthTokenType.ONLY, ForthTokenType.OPEN_FILE, ForthTokenType.OR, ForthTokenType.ORDER, ForthTokenType.OVER,
             ForthTokenType.PAD, ForthTokenType.PAGE, ForthTokenType.PARSE, ForthTokenType.PARSE_NAME, ForthTokenType.PICK,
               ForthTokenType.POSTPONE, ForthTokenType.PRECISION, ForthTokenType.PREVIOUS,
             ForthTokenType.QUIT,
-            ForthTokenType.R_O, ForthTokenType.R_W, ForthTokenType.R_FROM, ForthTokenType.R_FETCH, ForthTokenType.READ_FILE,
+            ForthTokenType.R_O, ForthTokenType.R_W, /*ForthTokenType.R_FROM,*/ /*ForthTokenType.R_FETCH,*/ ForthTokenType.READ_FILE,
               ForthTokenType.READ_LINE, ForthTokenType.RECURSE, ForthTokenType.REFILL, ForthTokenType.RENAME_FILE,
               ForthTokenType.REPEAT, ForthTokenType.REPLACES, ForthTokenType.REPOSITION_FILE, ForthTokenType.REPRESENT,
               ForthTokenType.REQUIRE, ForthTokenType.REQUIRED, ForthTokenType.RESIZE, ForthTokenType.RESIZE_FILE, ForthTokenType.RESTORE_INPUT,
-              ForthTokenType.ROLL, ForthTokenType.ROT, ForthTokenType.R_SHIFT,
+              ForthTokenType.ROLL, ForthTokenType.ROT, ForthTokenType.MINUS_ROT, ForthTokenType.R_SHIFT,
             ForthTokenType.S_QUOTE, ForthTokenType.S_TO_D, ForthTokenType.S_TO_F, ForthTokenType.SAVE_BUFFERS, ForthTokenType.SAVE_INPUT,
               ForthTokenType.S_C_R, ForthTokenType.SEARCH, ForthTokenType.SEARCH_WORDLIST, ForthTokenType.SEE, ForthTokenType.SET_CURRENT,
               ForthTokenType.SET_ORDER, ForthTokenType.SET_PRECISION, ForthTokenType.S_F_STORE, ForthTokenType.S_F_FETCH,

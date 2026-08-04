@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the GD-BASIC project are documented in this file.
+All notable changes to the GD-FORTH project are documented in this file.
 
 **Last Updated:** 2026-07-26 10:40 UTC
 
