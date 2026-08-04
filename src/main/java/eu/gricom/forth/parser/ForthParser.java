@@ -8,6 +8,7 @@ import eu.gricom.forth.statements.*;
 import eu.gricom.forth.statements.arithmetics.*;
 import eu.gricom.forth.statements.comparison.*;
 import eu.gricom.forth.statements.inOut.*;
+import eu.gricom.forth.statements.mathematics.*;
 import eu.gricom.forth.statements.stack.*;
 import eu.gricom.forth.statements.variables.FetchStatement;
 import eu.gricom.forth.statements.variables.StoreStatement;
@@ -177,6 +178,29 @@ public class ForthParser implements Parser {
                     _iPosition++;
                     break;
 
+                case ONE_MINUS:
+                    aoStatements.add(new OneMinusStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case ONE_PLUS:
+                    aoStatements.add(new OnePlusStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+
+                case TWO_DIVIDE:
+                    aoStatements.add(new TwoDivideStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+
+                case TWO_MULTIPLY:
+                    aoStatements.add(new TwoMultiplyStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+
                 // Multiple Tokens: Can be one of these: =, <, > , <>, <=, >=
                 case EQUALS:
                     aoStatements.add(new EqualsStatement(getToken(0).getType(), _iPosition));
@@ -208,11 +232,13 @@ public class ForthParser implements Parser {
                     _iPosition++;
                     break;
 
+                case DOUBLE_ZERO_EQUALS:
                 case ZERO_EQUALS:
                     aoStatements.add(new ZeroEqualsStatement(getToken(0).getType(), _iPosition));
                     _iPosition++;
                     break;
 
+                case DOUBLE_ZERO_LESS:
                 case ZERO_LESS:
                     aoStatements.add(new ZeroLessStatement(getToken(0).getType(), _iPosition));
                     _iPosition++;
@@ -305,6 +331,31 @@ public class ForthParser implements Parser {
 
                 case DEPTH:
                     aoStatements.add(new DepthStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case ABS:
+                    aoStatements.add(new AbsStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case MAX:
+                    aoStatements.add(new MaxStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case MIN:
+                    aoStatements.add(new MinStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case NEGATE:
+                    aoStatements.add(new NegateStatement(getToken(0).getType(), _iPosition));
+                    _iPosition++;
+                    break;
+
+                case SIGN:
+                    aoStatements.add(new SignStatement(getToken(0).getType(), _iPosition));
                     _iPosition++;
                     break;
 

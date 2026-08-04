@@ -148,7 +148,7 @@ public final class ForthReservedWords {
             ForthTokenType.DIVIDE, ForthTokenType.SLASH_MOD, ForthTokenType.SLASH_STRING,
             ForthTokenType.ZERO_LESS, ForthTokenType.ZERO_NOT_EQUALS, ForthTokenType.ZERO_EQUALS, ForthTokenType.ZERO_GREATER,
             ForthTokenType.ONE_PLUS, ForthTokenType.ONE_MINUS,
-            ForthTokenType.TWO_STORE, ForthTokenType.TWO_STAR, ForthTokenType.TWO_SLASH, /*ForthTokenType.TWO_TO_R,*/
+            ForthTokenType.TWO_STORE, ForthTokenType.TWO_MULTIPLY, ForthTokenType.TWO_DIVIDE, /*ForthTokenType.TWO_TO_R,*/
               ForthTokenType.TWO_FETCH, ForthTokenType.TWO_CONSTANT, ForthTokenType.TWO_DROP, ForthTokenType.TWO_DUPE,
               ForthTokenType.TWO_LITERAL, ForthTokenType.TWO_OVER, /*ForthTokenType.TWO_R_FROM,*/ /*ForthTokenType.TWO_R_FETCH,*/
               ForthTokenType.TWO_ROT, ForthTokenType.TWO_SWAP, ForthTokenType.TWO_VALUE, ForthTokenType.TWO_VARIABLE,
@@ -171,13 +171,13 @@ public final class ForthReservedWords {
               ForthTokenType.COMPARE, ForthTokenType.COMPILE_COMMA, ForthTokenType.CONSTANT, ForthTokenType.COUNT,
               ForthTokenType.CARRIAGE_RETURN, ForthTokenType.CREATE, ForthTokenType.CREATE_FILE, ForthTokenType.C_S_PICK,
               ForthTokenType.C_S_ROLL,
-            ForthTokenType.D_PLUS, ForthTokenType.D_MINUS, ForthTokenType.D_DOT, ForthTokenType.D_DOT_R, ForthTokenType.D_ZERO_LESS,
-              ForthTokenType.D_ZERO_EQUALS, ForthTokenType.D_TWO_STAR, ForthTokenType.D_TWO_SLASH, ForthTokenType.D_LESS_THAN,
-              ForthTokenType.D_EQUALS, ForthTokenType.D_TO_F, ForthTokenType.D_TO_S, ForthTokenType.D_ABS, ForthTokenType.DECIMAL,
+            ForthTokenType.DOUBLE_PLUS, ForthTokenType.DOUBLE_MINUS, ForthTokenType.D_DOT, ForthTokenType.D_DOT_R, ForthTokenType.DOUBLE_ZERO_LESS,
+              ForthTokenType.DOUBLE_ZERO_EQUALS, ForthTokenType.DOUBLE_TWO_STAR, ForthTokenType.DOUBLE_TWO_SLASH, ForthTokenType.DOUBLE_LESS_THAN,
+              ForthTokenType.DOUBLE_EQUALS, ForthTokenType.D_TO_F, ForthTokenType.D_TO_S, ForthTokenType.DOUBLE_ABS, ForthTokenType.DECIMAL,
               ForthTokenType.DEFER, ForthTokenType.DEFER_STORE, ForthTokenType.DEFER_FETCH, ForthTokenType.DEFINITIONS,
               ForthTokenType.DELETE_FILE, ForthTokenType.DEPTH, ForthTokenType.D_F_STORE, ForthTokenType.D_F_FETCH,
               ForthTokenType.D_F_ALIGN, ForthTokenType.D_F_ALIGNED, ForthTokenType.D_F_FIELD_COLON, ForthTokenType.D_FLOAT_PLUS,
-              ForthTokenType.D_FLOATS, ForthTokenType.D_MAX, ForthTokenType.D_MIN, ForthTokenType.D_NEGATE, ForthTokenType.DO,
+              ForthTokenType.D_FLOATS, ForthTokenType.DOUBLE_MAX, ForthTokenType.DOUBLE_MIN, ForthTokenType.DOUBLE_NEGATE, ForthTokenType.DO,
               ForthTokenType.DOES, ForthTokenType.DROP, ForthTokenType.D_U_LESS, ForthTokenType.DUMP, ForthTokenType.DUPE,
             ForthTokenType.EDITOR, ForthTokenType.E_KEY, ForthTokenType.E_KEY_TO_CHAR, ForthTokenType.E_KEY_TO_F_KEY,
               ForthTokenType.E_KEY_TO_X_CHAR, ForthTokenType.E_KEY_QUESTION, ForthTokenType.ELSE, ForthTokenType.EMIT,

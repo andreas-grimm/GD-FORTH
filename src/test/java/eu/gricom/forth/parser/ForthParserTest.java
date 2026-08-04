@@ -1112,4 +1112,169 @@ class ForthParserTest {
         assertNotNull(statements);
         assertTrue(statements.size() > 0);
     }
+
+    // ============================================================================
+    // Arithmetic Operations Tests (1+, 1-, 2*, 2/)
+    // ============================================================================
+
+    @Test
+    void testOnePlusOperator() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("1+", ForthTokenType.ONE_PLUS, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testOneMinusOperator() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("1-", ForthTokenType.ONE_MINUS, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testTwoMultiplyOperator() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2*", ForthTokenType.TWO_MULTIPLY, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testTwoDivideOperator() throws Exception {
+        tokens.add(new Token("10", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("2/", ForthTokenType.TWO_DIVIDE, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    // ============================================================================
+    // Mathematics Operations Tests (ABS, MAX, MIN, NEGATE, SIGN)
+    // ============================================================================
+
+    @Test
+    void testAbsOperator() throws Exception {
+        tokens.add(new Token("-5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("ABS", ForthTokenType.ABS, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testMaxOperator() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("3", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("MAX", ForthTokenType.MAX, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testMinOperator() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("3", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("MIN", ForthTokenType.MIN, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testNegateOperator() throws Exception {
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("NEGATE", ForthTokenType.NEGATE, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testSignOperator() throws Exception {
+        tokens.add(new Token("-42", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("SIGN", ForthTokenType.SIGN, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    // ============================================================================
+    // Combined Operations Tests
+    // ============================================================================
+
+    @Test
+    void testComplexArithmeticSequence() throws Exception {
+        tokens.add(new Token("10", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("1+", ForthTokenType.ONE_PLUS, 2));
+        tokens.add(new Token("2*", ForthTokenType.TWO_MULTIPLY, 3));
+        tokens.add(new Token("3", ForthTokenType.NUMBER, 4));
+        tokens.add(new Token("-", ForthTokenType.MINUS, 5));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testMathematicsOperatorsSequence() throws Exception {
+        tokens.add(new Token("-15", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("ABS", ForthTokenType.ABS, 2));
+        tokens.add(new Token("SIGN", ForthTokenType.SIGN, 3));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
+
+    @Test
+    void testMinMaxSequence() throws Exception {
+        tokens.add(new Token("10", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("20", ForthTokenType.NUMBER, 2));
+        tokens.add(new Token("MIN", ForthTokenType.MIN, 3));
+        tokens.add(new Token("5", ForthTokenType.NUMBER, 4));
+        tokens.add(new Token("MAX", ForthTokenType.MAX, 5));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+    }
 }

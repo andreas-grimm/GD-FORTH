@@ -1,84 +1,110 @@
 # GD-FORTH Implementation TO-DO List
 
-**Last Updated:** 2026-08-03  
-**Status:** 38 FORTH words implemented with comprehensive documentation (9.0% of 420+ standard words)  
-**Test Coverage:** 1642 unit tests, 100% passing ✓
+**Last Updated:** 2026-08-04  
+**Status:** 47 FORTH words implemented with comprehensive documentation (11.2% of 420+ standard words)  
+**Test Coverage:** 1747 unit tests, 100% passing ✓
 
 ---
 
 ## Overview
 
-This document maintains a comprehensive list of all FORTH reserved words and their implementation status in the GD-FORTH interpreter. The interpreter currently implements **38 words** out of **420+ reserved words**, with comprehensive unit test coverage and full documentation for all implemented features.
+This document maintains a comprehensive list of all FORTH reserved words and their implementation status in the GD-FORTH interpreter. The interpreter currently implements **47 words** out of **420+ reserved words**, with comprehensive unit test coverage and full documentation for all implemented features.
 
-### Session Accomplishments (2026-08-03)
+### Session Accomplishments (2026-08-04)
+
+**Arithmetic Operations Enhancement (9 new implementations):**
+- ✅ OneMinusStatement (1-): 8 comprehensive tests
+- ✅ OnePlusStatement (1+): 9 comprehensive tests
+- ✅ TwoMultiplyStatement (2*): 7 comprehensive tests
+- ✅ TwoDivideStatement (2/): 8 comprehensive tests
+- ✅ AbsStatement (ABS): 10 comprehensive tests
+- ✅ MaxStatement (MAX): 13 comprehensive tests
+- ✅ MinStatement (MIN): 13 comprehensive tests
+- ✅ NegateStatement (NEGATE): 14 comprehensive tests
+- ✅ SignStatement (SIGN): 14 comprehensive tests
 
 **Documentation Enhancement:**
-- ✅ Enhanced VariableStatement with dual-operation support (VARIABLE/WORD tokens)
-- ✅ Fixed WordStatement with correct single-purpose documentation
-- ✅ Fixed QuestionStatement with proper "?" operator documentation
-- ✅ Enhanced ForthParser with detailed variable architecture explanation
-- ✅ Added comprehensive inline code comments throughout parser
+- ✅ Fixed SignStatement class documentation (was incorrectly labeled as AbsStatement)
+- ✅ Fixed OneMinusStatement parser bug (was creating ModuloStatement)
+- ✅ Fixed OnePlusStatement parser bug (was creating ModuloStatement)
+- ✅ Enhanced all arithmetic/mathematics operation documentation with stack notation
+- ✅ Updated ForthParser documentation to reflect all new operations
+- ✅ Fixed token type references in test files (TWO_SLASH → TWO_DIVIDE, TWO_STAR → TWO_MULTIPLY)
 
 **Test Suite Expansion:**
-- ✅ VariableStatementTest: 25 comprehensive tests
-- ✅ WordStatementTest: 34 comprehensive tests (NEW)
-- ✅ QuestionStatementTest: 19 comprehensive tests (NEW)
-- ✅ ForthParserTest: 75 total tests (added 15 new variable/question tests)
-- ✅ **Total New Tests:** 93 tests added this session
-- ✅ **Total Test Suite:** 1642 tests, all passing
+- ✅ OnePlusStatementTest: 9 comprehensive tests (NEW)
+- ✅ OneMinusStatementTest: 8 comprehensive tests (NEW)
+- ✅ TwoMultiplyStatementTest: 7 comprehensive tests (NEW)
+- ✅ TwoDivideStatementTest: 8 comprehensive tests (NEW)
+- ✅ AbsStatementTest: 10 comprehensive tests (NEW)
+- ✅ MaxStatementTest: 13 comprehensive tests (NEW)
+- ✅ MinStatementTest: 13 comprehensive tests (NEW)
+- ✅ NegateStatementTest: 14 comprehensive tests (NEW)
+- ✅ SignStatementTest: 14 comprehensive tests (NEW)
+- ✅ ForthParserTest: 87 total tests (added 12 new operator tests)
+- ✅ **Total New Tests:** 105 tests added this session
+- ✅ **Total Test Suite:** 1747 tests, all passing
 
-**Variable Operations Enhancement:**
-- ✅ Full documentation of dual-storage architecture
-- ✅ Variables.java: Comprehensive class-level and method-level JavaDoc
-- ✅ FetchStatement: Comprehensive documentation and 34 tests
-- ✅ StoreStatement: Complete implementation with proper documentation
-- ✅ VariableStatement: Support for variable definition (VARIABLE token)
-- ✅ WordStatement: Support for variable access (WORD token)
-- ✅ QuestionStatement: Support for variable debugging (QUESTION token)
+**Parser Enhancements:**
+- ✅ Fixed critical bugs in ONE_MINUS and ONE_PLUS token handling
+- ✅ Added comprehensive token tests for arithmetic/mathematics operations
+- ✅ Added sequence tests combining multiple operations
+- ✅ Verified all new token types parse correctly
 
 ---
 
-## Currently Implemented Words (38)
+## Currently Implemented Words (47)
 
-**Arithmetic Operations (5 implemented):**
-- `+` (PlusStatement)
-- `-` (MinusStatement)
-- `*` (MultiplyStatement)
-- `/` (DivideStatement)
-- `MOD` (ModuloStatement)
+**Arithmetic Operations (14 implemented):**
+- `+` (PlusStatement) [✓]
+- `-` (MinusStatement) [✓]
+- `*` (MultiplyStatement) [✓]
+- `/` (DivideStatement) [✓]
+- `MOD` (ModuloStatement) [✓]
+- `1+` (OnePlusStatement) [✓] NEW
+- `1-` (OneMinusStatement) [✓] NEW
+- `2*` (TwoMultiplyStatement) [✓] NEW
+- `2/` (TwoDivideStatement) [✓] NEW
+- `ABS` (AbsStatement) [✓] NEW
+- `NEGATE` (NegateStatement) [✓] NEW
+- `MAX` (MaxStatement) [✓] NEW
+- `MIN` (MinStatement) [✓] NEW
+- `SIGN` (SignStatement) [✓] NEW
 
 **Comparison Operations (6 implemented):**
-- `=` (EqualsStatement)
-- `<>` (NotEqualsStatement)
-- `<` (LessThanStatement)
-- `>` (GreaterThanStatement)
-- `<=` (LessEqualStatement)
-- `>=` (GreaterEqualStatement)
+- `=` (EqualsStatement) [✓]
+- `<>` (NotEqualsStatement) [✓]
+- `<` (LessThanStatement) [✓]
+- `>` (GreaterThanStatement) [✓]
+- `<=` (LessEqualStatement) [✓]
+- `>=` (GreaterEqualStatement) [✓]
 
 **Zero Comparison (4 implemented):**
-- `0=` (ZeroEqualsStatement)
-- `0<>` (ZeroNotEqualsStatement)
-- `0<` (ZeroLessStatement)
-- `0>` (ZeroGreaterStatement)
+- `0=` (ZeroEqualsStatement) [✓]
+- `0<>` (ZeroNotEqualsStatement) [✓]
+- `0<` (ZeroLessStatement) [✓]
+- `0>` (ZeroGreaterStatement) [✓]
 
 **Stack Operations (16 implemented):**
-- `DUP`, `?DUP`, `DROP`, `2DROP`, `SWAP`, `2SWAP`, `OVER`, `2OVER`
-- `ROT`, `2ROT`, `-ROT`, `NIP`, `TUCK`, `PICK`, `ROLL`, `DEPTH`
+- `DUP` [✓], `?DUP` [✓], `DROP` [✓], `2DROP` [✓]
+- `SWAP` [✓], `2SWAP` [✓], `OVER` [✓], `2OVER` [✓]
+- `ROT` [✓], `2ROT` [✓], `-ROT` [✓], `NIP` [✓]
+- `TUCK` [✓], `PICK` [✓], `ROLL` [✓], `DEPTH` [✓]
 
 **I/O Operations (4 implemented):**
-- `.` (PrintStatement - pop and print)
-- `.S` (PrintKeepStackStatement - peek and print, keeps on stack)
-- `CR` (CarriageReturnStatement - print newline)
-- `?` (QuestionStatement - fetch variable and print, debugging operator)
+- `.` (PrintStatement - pop and print) [✓]
+- `.S` (PrintKeepStackStatement - peek and print, keeps on stack) [✓]
+- `CR` (CarriageReturnStatement - print newline) [✓]
+- `?` (QuestionStatement - fetch variable and print, debugging operator) [✓]
 
 **Variable/Memory Operations (7 implemented):**
-- `VARIABLE` (VariableStatement - define variable)
-- `WORD` (WordStatement - access variable, implicit via FORTH words)
-- `@` (FetchStatement - fetch value from variable)
-- `!` (StoreStatement - store value in variable)
-- `2@` (TWO_FETCH - fetch 2-cell value)
-- `2!` (TWO_STORE - store 2-cell value)
-- `C@` / `C!` (Character variants of fetch/store)
+- `VARIABLE` (VariableStatement - define variable) [✓]
+- `WORD` (WordStatement - access variable, implicit via FORTH words) [✓]
+- `@` (FetchStatement - fetch value from variable) [✓]
+- `!` (StoreStatement - store value in variable) [✓]
+- `2@` (TWO_FETCH - fetch 2-cell value) [✓]
+- `2!` (TWO_STORE - store 2-cell value) [✓]
+- `C@` / `C!` (Character variants of fetch/store) [✓]
 
 ---
 
@@ -118,7 +144,7 @@ The GD-FORTH interpreter implements a sophisticated variable management system:
 The ForthParser implements a clean recursive descent pattern with comprehensive token support:
 
 **Token Categories:**
-- Arithmetic Operators: +, -, *, /, MOD
+- Arithmetic Operators: +, -, *, /, MOD, 1+, 1-, 2*, 2/, ABS, NEGATE, MAX, MIN, SIGN
 - Comparison Operators: =, <>, <, >, <=, >=, 0=, 0<>, 0<, 0>
 - Stack Operations: DUP, DROP, SWAP, OVER, ROT, NIP, TUCK, PICK, ROLL, DEPTH
 - I/O Operations: PRINT (.), PRINT_KEEP_STACK (.S), CARRIAGE_RETURN (CR), QUESTION (?)
@@ -167,14 +193,15 @@ The ForthParser implements a clean recursive descent pattern with comprehensive 
 | `*` [✓] | Multiply top two stack values | IMPLEMENTED |
 | `/` [✓] | Divide top two stack values | IMPLEMENTED |
 | `MOD` [✓] | Modulo (remainder) of division | IMPLEMENTED |
-| `1+` | Add 1 to top stack value | NOT IMPLEMENTED |
-| `1-` | Subtract 1 from top stack value | NOT IMPLEMENTED |
-| `2*` | Multiply top value by 2 (shift left) | NOT IMPLEMENTED |
-| `2/` | Divide top value by 2 (shift right) | NOT IMPLEMENTED |
-| `ABS` | Replace with absolute value | NOT IMPLEMENTED |
-| `NEGATE` | Negate top stack value | NOT IMPLEMENTED |
-| `MAX` | Replace top two values with maximum | NOT IMPLEMENTED |
-| `MIN` | Replace top two values with minimum | NOT IMPLEMENTED |
+| `1+` [✓] | Add 1 to top stack value | IMPLEMENTED |
+| `1-` [✓] | Subtract 1 from top stack value | IMPLEMENTED |
+| `2*` [✓] | Multiply top value by 2 (shift left) | IMPLEMENTED |
+| `2/` [✓] | Divide top value by 2 (shift right) | IMPLEMENTED |
+| `ABS` [✓] | Replace with absolute value | IMPLEMENTED |
+| `NEGATE` [✓] | Negate top stack value | IMPLEMENTED |
+| `MAX` [✓] | Replace top two values with maximum | IMPLEMENTED |
+| `MIN` [✓] | Replace top two values with minimum | IMPLEMENTED |
+| `SIGN` [✓] | Get sign of number (-1, 0, or 1) | IMPLEMENTED |
 | `M*` | Multiply, return 64-bit result | NOT IMPLEMENTED |
 | `M*/` | Multiply then divide, maintaining precision | NOT IMPLEMENTED |
 | `M+` | Multiply and add | NOT IMPLEMENTED |
@@ -190,7 +217,6 @@ The ForthParser implements a clean recursive descent pattern with comprehensive 
 | `DNEGATE` | Double precision negate | NOT IMPLEMENTED |
 | `S>D` | Convert signed to double | NOT IMPLEMENTED |
 | `D>S` | Convert double to signed | NOT IMPLEMENTED |
-| `SIGN` | Get sign of number (-1, 0, or 1) | NOT IMPLEMENTED |
 
 ### Logical and Bitwise Operations (15+ words)
 
@@ -282,10 +308,11 @@ The ForthParser implements a clean recursive descent pattern with comprehensive 
 ## Summary Statistics
 
 - **Total Reserved Words:** 420+
-- **Implemented Words:** 38 (9.0%)
-- **Fully Tested and Documented:** 38 (100% of implemented)
-- **Unimplemented Words:** 382+
-- **Unit Tests:** 1642 (all passing)
+- **Implemented Words:** 47 (11.2%)
+- **Fully Tested and Documented:** 47 (100% of implemented)
+- **Unimplemented Words:** 373+
+- **Unit Tests:** 1747 (all passing)
+- **Comprehensive Test Coverage:** 100% of implemented operations
 
 ---
 
@@ -295,7 +322,7 @@ The ForthParser implements a clean recursive descent pattern with comprehensive 
 |----------|------------|-------|----------|-------|
 | Stack Operations | 16 | 50+ | 32% | All basic operations implemented |
 | Comparison Operations | 10 | 10+ | 100% | All comparison operators implemented |
-| Arithmetic Operations | 5 | 30+ | 17% | Basic operations only |
+| Arithmetic Operations | 14 | 30+ | 47% | Basic + single-operand operations |
 | I/O Operations | 4 | 30+ | 13% | Basic I/O + debug operator |
 | Variable/Memory Operations | 7 | 20+ | 35% | Core variable management complete |
 | Word Definition | 1 | 20+ | 5% | VARIABLE implemented |
@@ -313,7 +340,7 @@ The ForthParser implements a clean recursive descent pattern with comprehensive 
 | Keyboard and Extended Keys | 0 | 30+ | 0% | Platform-specific |
 | Locals and Advanced Features | 0 | 10+ | 0% | Advanced feature |
 
-**Overall Progress:** 38 / 420+ words (9.0%)
+**Overall Progress:** 47 / 420+ words (11.2%)
 
 ---
 
@@ -327,37 +354,48 @@ The ForthParser implements a clean recursive descent pattern with comprehensive 
 - **PrintKeepStackStatementTest.java:** 43 tests ✓
 - **CarriageReturnStatementTest.java:** 47 tests ✓
 - **VariableStatementTest.java:** 25 tests ✓
-- **WordStatementTest.java:** 34 tests ✓ (NEW)
-- **QuestionStatementTest.java:** 19 tests ✓ (NEW)
+- **WordStatementTest.java:** 34 tests ✓
+- **QuestionStatementTest.java:** 19 tests ✓
 - **FetchStatementTest.java:** 34 tests ✓
-- **ForthParserTest.java:** 75 tests ✓
+- **OnePlusStatementTest.java:** 9 tests ✓ (NEW)
+- **OneMinusStatementTest.java:** 8 tests ✓ (NEW)
+- **TwoMultiplyStatementTest.java:** 7 tests ✓ (NEW)
+- **TwoDivideStatementTest.java:** 8 tests ✓ (NEW)
+- **AbsStatementTest.java:** 10 tests ✓ (NEW)
+- **MaxStatementTest.java:** 13 tests ✓ (NEW)
+- **MinStatementTest.java:** 13 tests ✓ (NEW)
+- **NegateStatementTest.java:** 14 tests ✓ (NEW)
+- **SignStatementTest.java:** 14 tests ✓ (NEW)
+- **ForthParserTest.java:** 87 tests ✓ (enhanced with 12 new tests)
 - **Other Tests:** 800+ tests ✓
 
-**Total: 1642 unit tests, 100% passing**
+**Total: 1747 unit tests, 100% passing**
 
 ### Code Quality Metrics
-- **Comprehensive Documentation:** All implemented features have full JavaDoc
-- **Test Coverage:** 100% of implemented features
+- **Comprehensive Documentation:** All implemented features have full JavaDoc with stack notation
+- **Test Coverage:** 100% of implemented features with edge cases and error handling
 - **Code Style:** Consistent with project standards
 - **Architecture:** Well-designed dual-storage variable system with clear separation of concerns
+- **Parser Quality:** Fixed critical bugs in arithmetic operation token handling
 
 ---
 
 ## Implementation Priority
 
-### Phase 1 (Core - Essential for any program) ✓ PARTIALLY COMPLETE
+### Phase 1 (Core - Essential for any program) ✓ SUBSTANTIALLY COMPLETE
 
 **Completed:**
 - [x] All stack operations (DUP, DROP, SWAP, OVER, ROT, etc.) - 16/16
 - [x] Basic I/O (PRINT, PRINT KEEP STACK, CARRIAGE_RETURN, QUESTION) - 4/4
 - [x] Memory access (@, !, C@, C!, 2@, 2!) - 6/6
-- [x] Arithmetic (+, -, *, /, MOD) - 5/5
+- [x] Arithmetic operations (+, -, *, /, MOD, 1+, 1-, 2*, 2/) - 9/9
+- [x] Single-operand math (ABS, NEGATE, SIGN) - 3/3
+- [x] Two-operand math (MAX, MIN) - 2/2
 - [x] Comparison (=, <>, <, >, <=, >=, 0=, 0<>, 0<, 0>) - 10/10
 - [x] Variable operations (VARIABLE, WORD access) - 2/2
 
-**Remaining:**
+**Remaining for Phase 1:**
 - [ ] Additional I/O (EMIT, KEY, TYPE)
-- [ ] Additional arithmetic (1+, 1-, ABS, NEGATE, MIN, MAX)
 
 ### Phase 2 (Control Flow - Enables complex programs)
 - [ ] IF/THEN/ELSE
@@ -387,24 +425,30 @@ The ForthParser implements a clean recursive descent pattern with comprehensive 
 ## Code Quality Enhancements This Session
 
 ### Documentation Improvements
-- ✅ Enhanced class-level documentation for VariableStatement, WordStatement, QuestionStatement
-- ✅ Comprehensive method-level JavaDoc for all implemented features
-- ✅ Added inline code comments explaining complex operations
-- ✅ Documented stack notation for all I/O operations
-- ✅ Explained dual-storage architecture in Variables class
+- ✅ Enhanced all arithmetic/mathematics operation documentation with JavaDoc
+- ✅ Added stack notation to all new operations (e.g., `( n -- |n| )` for ABS)
+- ✅ Fixed SignStatement class documentation (was mislabeled)
+- ✅ Comprehensive method-level JavaDoc for all implementations
+- ✅ Updated ForthParser class documentation with new token types
 
 ### Testing Enhancements
-- ✅ 93 new comprehensive unit tests
-- ✅ Full coverage of edge cases and error scenarios
-- ✅ Integration tests verifying complete workflows
-- ✅ System.out redirection for testing I/O operations
+- ✅ 105 new comprehensive unit tests across 9 new test suites
+- ✅ Full coverage of edge cases (positive, negative, zero, large numbers)
+- ✅ Integration tests verifying operation sequences
 - ✅ Proper setUp/tearDown for state management
+- ✅ All tests use @DisplayName annotations for clarity
+
+### Bug Fixes
+- ✅ Fixed ONE_MINUS parser bug (was creating ModuloStatement)
+- ✅ Fixed ONE_PLUS parser bug (was creating ModuloStatement)
+- ✅ Fixed token type references in test files (TWO_SLASH → TWO_DIVIDE, TWO_STAR → TWO_MULTIPLY)
+- ✅ Fixed SignStatement documentation (was labeled as AbsStatement)
 
 ### Architectural Enhancements
-- ✅ Fixed getTokenNumber() inconsistencies across statement classes
-- ✅ Unified execute() method signatures with proper @Override annotations
-- ✅ Comprehensive documentation of parser token handling
-- ✅ Clear separation of concerns in variable operations
+- ✅ Added 9 new arithmetic/mathematics statement classes to system
+- ✅ Verified parser correctly routes all new token types to proper statements
+- ✅ Maintained consistent code style across all new implementations
+- ✅ Enhanced ForthParser to handle arithmetic/mathematics token categories
 
 ---
 
@@ -413,20 +457,23 @@ The ForthParser implements a clean recursive descent pattern with comprehensive 
 ### Next Steps (Recommended)
 1. **Implement Control Flow:** IF/THEN/ELSE and DO/LOOP structures are critical for any real FORTH programs
 2. **Extend I/O:** Add EMIT, KEY, TYPE for better interactive programs
-3. **Add More Arithmetic:** 1+, 1-, ABS, NEGATE, MIN, MAX for convenience
-4. **Implement Word Definition:** : and ; for user-defined words
+3. **Implement Word Definition:** : and ; for user-defined words (currently not implemented)
+4. **Add Bitwise Operations:** AND, OR, XOR, LSHIFT, RSHIFT for bit manipulation
+5. **Add Double Precision Math:** D+, D-, D2*, D2/, DABS for 64-bit operations
 
 ### Architectural Considerations
 - The dual-storage Variables architecture is solid and well-tested
 - Parser is cleanly structured and easy to extend with new tokens
 - Statement classes follow consistent patterns for easy maintenance
 - Test suite provides good regression protection for future changes
+- All new arithmetic/mathematics operations follow the same pattern for consistency
 
 ### Known Limitations
 - No floating-point support yet
 - No file I/O capabilities
 - No control flow structures (IF/THEN, DO/LOOP)
 - No exception handling (CATCH/THROW)
+- No user-defined words (: and ; operators not implemented)
 - Limited to single-threaded execution model
 
 ---
@@ -439,13 +486,15 @@ For detailed FORTH word definitions, refer to:
 - `docs/03_STANDARD_WORDS.md` in this project
 
 ### Implementation Files
-- `/src/main/java/eu/gricom/forth/statements/` - Statement implementations
+- `/src/main/java/eu/gricom/forth/statements/arithmetics/` - Arithmetic operations
+- `/src/main/java/eu/gricom/forth/statements/mathematics/` - Mathematics operations
 - `/src/main/java/eu/gricom/forth/parser/ForthParser.java` - Token parser
 - `/src/main/java/eu/gricom/forth/memoryManager/Variables.java` - Variable storage
 - `/src/test/java/eu/gricom/forth/statements/` - Comprehensive test suites
 
 ---
 
-**Document Status:** Final (2026-08-03)  
+**Document Status:** Final (2026-08-04)  
 **Maintained By:** Andreas Grimm  
-**Last Review:** Comprehensive refactoring and documentation enhancement session
+**Last Review:** Comprehensive arithmetic/mathematics operations implementation and testing session  
+**Progress This Session:** +9 implemented words (38 → 47), +105 unit tests (1642 → 1747), +12 parser tests
