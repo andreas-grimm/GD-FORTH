@@ -18,7 +18,7 @@ class EnvParamTest {
 
     @AfterEach
     void tearDown() {
-        EnvParam.setConfigGroup("environment");
+        EnvParam.setConfigGroup("application");
         resetSingleton();
     }
 

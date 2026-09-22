@@ -25,7 +25,7 @@ import java.util.Locale;
 public class Forth {
     private Program _oProgram = new Program();
     private final transient Logger _oLogger = new Logger(this.getClass().getName());
-    private static String _strVersion = EnvParam.getString("version");
+    private static String _strVersion = EnvParam.getVersion();
     private static boolean _bEditorFlag = true;
 
     /**
@@ -174,7 +174,7 @@ public class Forth {
     public static void main(final String[] args) {
         Logger oLogger = new Logger("main");
         Program oProgram = new Program();
-        oLogger.setLogLevel(EnvParam.getString("log_level"));
+        oLogger.setLogLevel(EnvParam.getLogLevel());
 
         CommandLine oCommandLine = null;
 
@@ -210,7 +210,7 @@ public class Forth {
             String strLogLevel = oCommandLine.getOptionValue("v");
             String strLogLevelList = "trace|debug|info|warning";
 
-            oLogger.setLogLevel(EnvParam.getString("log_level"));
+            oLogger.setLogLevel(EnvParam.getLogLevel());
 
             if (strLogLevelList.contains(strLogLevel.toLowerCase(Locale.ROOT))) {
                 oLogger.setLogLevel(strLogLevel);
@@ -224,7 +224,7 @@ public class Forth {
             oLogger.debug("Display help message...");
 
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("java -jar "+ EnvParam.getString("app_name") + "-" + _strVersion + ".jar [<filename.fhs>]", oOptions);        }
+            formatter.printHelp("java -jar "+ EnvParam.getAppName() + "-" + _strVersion + ".jar [<filename.fhs>]", oOptions);        }
 
         if (oCommandLine != null && oCommandLine.hasOption("r")) {
             _bEditorFlag = false;

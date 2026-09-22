@@ -1,0 +1,186 @@
+# GD-FORTH Configuration File
+#
+# This file consolidates all configuration parameters for the FORTH interpreter.
+# Parameters can be overridden by environment variables with the same name.
+# Format: Environment variables take precedence over this file.
+
+# ==================== Application Settings ====================
+# Used by: eu.gricom.forth.Forth
+
+application:
+  # Application name
+  # Class: eu.gricom.forth.Forth
+  # Type: String
+  # Description: The display name of the application used in help messages and logging
+  app_name: FORTH
+
+  # Application version
+  # Class: eu.gricom.forth.Forth
+  # Type: String
+  # Description: Semantic version of the application (major.minor.patch)
+  version: 0.0.1
+
+  # Logging level
+  # Class: eu.gricom.forth.Forth
+  # Type: String
+  # Description: Controls logging verbosity (severe, warning, info, fine, finer, finest)
+  log_level: warning
+
+# ==================== Memory Configuration ====================
+# Used by: eu.gricom.forth.memoryManager.Memory
+
+memory:
+  # Memory size in bytes
+  # Class: eu.gricom.forth.memoryManager.Memory
+  # Type: Integer
+  # Description: Total size of the memory array. Determines the addressable memory space for the FORTH interpreter.
+  # Default: 65535 bytes (64 KB) provides compatibility with 16-bit address space
+  # Can be adjusted based on available system memory and FORTH program requirements
+  size: 65535
+
+# ==================== Variable Type Configuration ====================
+# Used by: eu.gricom.forth.variableTypes.RealValue
+
+variables:
+  # Real type variable length (precision)
+  # Class: eu.gricom.forth.variableTypes.RealValue
+  # Type: Integer
+  # Description: Maximum number of significant digits for BCD (Binary Coded Decimal) floating-point values
+  # Default: 40 digits provides high precision for financial and scientific calculations
+  # Initial value can be overridden by local config, command-line parameters, or pragma statements
+  realTypeVariableLength: 40
+
+  # Maximum BCD digits
+  # Class: eu.gricom.forth.variableTypes.RealValue
+  # Type: Integer
+  # Description: Maximum number of digits (including decimal point) for floating-point representation
+  # Used to determine string buffer size and precision limits
+  max_bcd_digits: 40
+
+# ==================== ROM (Read-Only Memory) Configuration ====================
+# Used by: eu.gricom.forth.memoryManager.Memory
+# Description: Defines ROM areas for different platforms with blocked memory ranges and image files
+
+roms:
+  # Standard 16-bit Platform ROM Configuration
+  # Compatible with traditional 16-bit FORTH systems
+  standard_16bit:
+    # Platform identifier
+    # Type: String
+    # Description: Human-readable name for this ROM platform configuration
+    name: "Standard 16-bit Platform"
+
+    # Blocked memory ranges (read-only areas)
+    # Type: List of objects with 'start', 'end', and optional 'image_name' fields
+    # Description: Memory ranges that cannot be overwritten. Each range is inclusive on both ends.
+    # Each block can have its own ROM image file for flexible multi-part ROM configurations.
+    blocked_ranges:
+      # System ROM - Contains core interpreter code and built-in words
+      - start: 0
+        end: 4095
+        # ROM image file name for this block
+        # Type: String
+        # Description: Name of the binary image file to load into this ROM range
+        # Path: Loaded from src/main/resources directory
+        # If omitted, block is initialized with 0x00
+        image_name: "standard_16bit_system_rom.bin"
+
+      # Interrupt vectors - Contains system interrupt handlers
+      - start: 61440
+        end: 65535
+        # ROM image file name for this block
+        # Type: String
+        # Description: Separate ROM image for interrupt vector area
+        image_name: "standard_16bit_vectors_rom.bin"
+
+  # Minimal Embedded Platform ROM Configuration
+  # For resource-constrained embedded systems
+  embedded:
+    # Platform identifier
+    # Type: String
+    # Description: Human-readable name for this ROM platform configuration
+    name: "Minimal Embedded Platform"
+
+    # Blocked memory ranges (read-only areas)
+    # Type: List of objects with 'start', 'end', and optional 'image_name' fields
+    # Description: Memory ranges reserved for ROM. More compact than standard 16-bit platform.
+    blocked_ranges:
+      # Embedded system ROM - Minimal interpreter and essential words only
+      - start: 0
+        end: 2047
+        # ROM image file name for this block
+        # Type: String
+        # Description: Compact ROM image for embedded systems
+        image_name: "embedded_rom.bin"
+
+  # Extended Platform ROM Configuration
+  # For systems with additional ROM for libraries and utilities
+  extended:
+    # Platform identifier
+    # Type: String
+    # Description: Human-readable name for this ROM platform configuration
+    name: "Extended Platform with Libraries"
+
+    # Blocked memory ranges (read-only areas)
+    # Type: List of objects with 'start', 'end', and optional 'image_name' fields
+    # Description: Multiple ROM areas - core system and library ROM sections
+    # Each section can have its own image file for modular ROM management
+    blocked_ranges:
+      # Core system ROM
+      - start: 0
+        end: 8191
+        # ROM image file name for this block
+        # Type: String
+        # Description: Core system ROM image
+        image_name: "extended_system_rom.bin"
+
+      # Library ROM area - Contains standard libraries and utilities
+      - start: 32768
+        end: 49151
+        # ROM image file name for this block
+        # Type: String
+        # Description: Library and utilities ROM image
+        image_name: "extended_library_rom.bin"
+
+      # Interrupt vectors
+      - start: 61440
+        end: 65535
+        # ROM image file name for this block
+        # Type: String
+        # Description: Interrupt handler vectors ROM image
+        image_name: "extended_vectors_rom.bin"
+
+# ==================== Testing & Runtime Configuration ====================
+# Used by: Test suites, runtime diagnostics, and performance tuning
+# Note: EnvParamTest expects specific values in this group for verification
+
+testing:
+  # Application name (test variant)
+  # Class: eu.gricom.forth.helper.EnvParamTest
+  # Type: String
+  # Description: Test-specific application name identifier
+  app_name: GD-FORTH
+
+  # Maximum BCD digits
+  # Class: eu.gricom.forth.variableTypes.RealValue, eu.gricom.forth.helper.EnvParamTest
+  # Type: Integer
+  # Description: Maximum number of digits for BCD floating-point representation
+  max_bcd_digits: 40
+
+  # Debug mode flag
+  # Class: eu.gricom.forth.helper.EnvParamTest
+  # Type: Boolean
+  # Description: Enables additional debug output and diagnostic logging
+  debug_mode: false
+
+  # Timeout seconds
+  # Class: eu.gricom.forth.helper.EnvParamTest
+  # Type: Integer
+  # Description: Maximum execution time in seconds for individual operations
+  timeout_seconds: 30
+
+  # Timeout float (milliseconds precision)
+  # Class: eu.gricom.forth.helper.EnvParamTest
+  # Type: Float
+  # Description: Fractional timeout value for high-precision timing control
+  timeout_float: 30.5
