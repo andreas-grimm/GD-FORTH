@@ -1,172 +1,245 @@
-# Bashforth Documentation Suite - Complete Analysis
+# GD-FORTH Documentation
 
-This directory contains comprehensive, iteratively-improved documentation of the **bashforth** Forth interpreter (v0.63a) - a complete Forth implementation written in bash.
-
-## 📚 Documentation Overview
-
-### 5 Core Documents × 5 Iterations = Complete Analysis
-
-#### 1. **Detailed Low-Level Description** (`Detailed_Low_Level_Description_v*.md`)
-- **Purpose:** Section-by-section analysis of bashforth architecture
-- **v1:** Initial breakdown of memory model, stack operations, virtual machine
-- **v2:** Enhanced with execution flow details and component interactions
-- **v3-v5:** Edge cases, optimization patterns, and cross-component dependencies
-- **Key Topics:** Virtual machine, memory arrays, instruction pointer, stack caching
-
-#### 2. **Language-Agnostic Design** (`Language_Agnostic_Design_v*.md`)
-- **Purpose:** Implementation specification independent of bash/shell
-- **v1:** Abstract data structures and core algorithms
-- **v2:** Refined pseudo-code and algorithm clarity
-- **v3-v5:** Complex scenarios, edge cases, advanced patterns
-- **Key Topics:** Data structure specifications, execution flow, exception handling models
-
-#### 3. **Forth Implementation Specification** (`Forth_Implementation_Specification_v*.md`)
-- **Purpose:** Complete catalog of Forth words and semantics
-- **v1:** Core primitive words with stack effects
-- **v2:** Enhanced descriptions and usage examples
-- **v3-v5:** Word combinations, advanced patterns, and semantic details
-- **Key Topics:** 150+ Forth words, stack effects, compilation vs. interpretation
-
-#### 4. **Comparison to Standard Forth** (`Comparison_To_Standard_Forth_v*.md`)
-- **Purpose:** How this implementation differs from traditional Forth
-- **v1:** Initial comparison of features and limitations
-- **v2:** Detailed advantages/disadvantages and performance notes
-- **Key Topics:** Standard compliance, unique features, performance trade-offs
-
-#### 5. **Beginner's Guide** (`Beginners_Guide_v*.md`)
-- **Purpose:** Gentle introduction for Forth newcomers
-- **v1:** Basic stack concepts and first programs
-- **v2:** Expanded examples and interactive sessions
-- **Key Topics:** Stack visualization, basic words, defining words, common patterns
-
-## 📊 Document Statistics
-
-| Document | v1 | v2 | v3-v5 | Total Lines |
-|----------|----|----|-------|------------|
-| Beginners Guide | 10K | 11K | - | ~21K |
-| Comparison | 11K | 12K | - | ~23K |
-| Low-Level Description | 9.9K | 13K | 9.2K | ~32K |
-| Forth Specification | 16K | 14K | - | ~30K |
-| Language-Agnostic Design | 13K | 14K | 11K | ~38K |
-| **TOTAL** | **60K** | **64K** | **20K** | **~144K lines** |
-
-## 🎯 Key Features of This Documentation
-
-✅ **Comprehensive Coverage**
-- Complete bashforth architecture from memory model to user interface
-- All major subsystems documented: VM, stacks, dictionary, compilation, exception handling
-
-✅ **Iterative Improvements**
-- 5 versions per document showing progression from basic to advanced
-- Early versions focus on fundamentals; later versions add edge cases and optimizations
-- Clear version history showing development of understanding
-
-✅ **Multiple Perspectives**
-- Technical (Low-Level Description)
-- Theoretical (Language-Agnostic Design)
-- Practical (Forth Implementation Specification)
-- Comparative (vs Standard Forth)
-- Educational (Beginner's Guide)
-
-✅ **Visual Documentation**
-- Mermaid diagrams for architecture and flow
-- Stack visualizations and memory layout diagrams
-- Execution flow charts
-- Component relationship diagrams
-
-## 🚀 How to Use This Documentation
-
-### For Bashforth Users
-Start with **Beginner's Guide** → **Forth Implementation Specification**
-
-### For Implementers
-Start with **Language-Agnostic Design** → **Detailed Low-Level Description**
-
-### For Comparative Analysis
-Refer to **Comparison to Standard Forth** and cross-reference with specific components
-
-### For Deep Understanding
-Follow the version progression (v1→v2→v3→v5) within each document to see complexity building
-
-## 📝 Document Interdependencies
-
-```
-┌─────────────────────────────────────────┐
-│    Bashforth Implementation (Code)      │
-└──────────────┬──────────────────────────┘
-               │
-        ┌──────┴──────┐
-        ▼              ▼
-┌──────────────────┐  ┌─────────────────────┐
-│  Low-Level      │  │  Language-Agnostic  │
-│  Description    │  │  Design             │
-│  (Technical)    │  │  (Theoretical)      │
-└────────┬─────────┘  └──────────┬──────────┘
-         │                       │
-         └───────────┬───────────┘
-                     ▼
-        ┌──────────────────────────┐
-        │  Forth Implementation    │
-        │  Specification (Catalog) │
-        └─────────────┬────────────┘
-                      │
-         ┌────────────┴────────────┐
-         ▼                         ▼
-    ┌──────────────┐      ┌────────────────┐
-    │  Comparison  │      │  Beginner's    │
-    │  to Standard │      │  Guide         │
-    │  Forth       │      │  (Educational) │
-    └──────────────┘      └────────────────┘
-```
-
-## 🔍 Bashforth Architecture Summary
-
-**Memory Model:**
-- Unified memory array `m[]` for code and data
-- Dictionary Pointer (dp) for code allocation
-- Separate stacks: data `s[]`, return `r[]`, string `ss[]`
-
-**Execution Model:**
-- Virtual machine with Instruction Pointer (ip)
-- Word Pointer (w) for current word
-- Stack caching with top-of-stack (tos) optimization
-
-**Key Features:**
-- ~150 primitive words
-- Full compilation and interpretation modes
-- Exception handling with catch/throw
-- String stack for text manipulation
-- File I/O and system integration
-
-## 📌 Version History
-
-- **Generated:** July 18, 2026
-- **Bashforth Version:** 0.63a
-- **Documentation Iterations:** 5 per document
-- **Total Analysis Lines:** ~144,000
-
-## 🎓 Learning Path Recommendations
-
-### Absolute Beginner
-1. Beginners_Guide_v1.md (basics)
-2. Beginners_Guide_v2.md (interactive examples)
-
-### Developer/Implementer
-1. Language_Agnostic_Design_v1.md (concepts)
-2. Language_Agnostic_Design_v2.md (algorithms)
-3. Language_Agnostic_Design_v3-v5.md (edge cases)
-4. Detailed_Low_Level_Description_v1.md (implementation)
-
-### Forth Programmer
-1. Comparison_To_Standard_Forth_v1.md (overview)
-2. Comparison_To_Standard_Forth_v2.md (details)
-3. Forth_Implementation_Specification_v1.md (words)
-4. Forth_Implementation_Specification_v2.md (advanced usage)
-
-## 📖 Document Cross-References
-
-All documents include cross-references to related sections in other documents for seamless navigation between perspectives.
+**Version:** 0.0.2  
+**Last Updated:** October 3, 2026
 
 ---
 
-**Generated with comprehensive analysis of bashforth v0.63a (3,802 lines of bash code)**
+## 📚 Documentation Structure
+
+The documentation is organized into clear categories for easy navigation:
+
+### 🚀 Getting Started
+
+Start here if you're new to GD-FORTH:
+
+| Document | Purpose |
+|----------|---------|
+| [00-GETTING-STARTED.md](guides/00-GETTING-STARTED.md) | Quick start guide to install and run GD-FORTH |
+| [02-LANGUAGE-GUIDE.md](guides/02-LANGUAGE-GUIDE.md) | Introduction to the FORTH language basics |
+
+### 📖 Guides & Tutorials
+
+Comprehensive guides for users:
+
+| Document | Purpose |
+|----------|---------|
+| [DOCUMENTATION-SUMMARY.md](guides/DOCUMENTATION-SUMMARY.md) | Overview of all available documentation |
+| [INDEX.md](guides/INDEX.md) | Complete documentation index and structure |
+
+### 🔧 Implementation & API
+
+Technical documentation for developers:
+
+| Document | Purpose |
+|----------|---------|
+| [03-IMPLEMENTATION-GUIDE.md](api/03-IMPLEMENTATION-GUIDE.md) | Architecture and implementation details |
+| [04-STANDARD-WORDS.md](api/04-STANDARD-WORDS.md) | Reference of implemented FORTH words |
+| [06-API-REFERENCE.md](api/06-API-REFERENCE.md) | Java API reference for developers |
+
+### ✨ Features
+
+Documentation of specific features:
+
+| Feature | Document |
+|---------|----------|
+| **IF/ELSE/THEN** | [IF_IMPLEMENTATION_SUMMARY.md](features/IF_IMPLEMENTATION_SUMMARY.md) |
+| | [FORTH_IF_TEST_EXAMPLES.md](features/FORTH_IF_TEST_EXAMPLES.md) |
+| | [IF_EXECUTION_DEMO.md](features/IF_EXECUTION_DEMO.md) |
+
+### 💡 Code Examples
+
+Practical examples and use cases:
+
+| Document | Purpose |
+|----------|---------|
+| [05-CODE-EXAMPLES.md](examples/05-CODE-EXAMPLES.md) | FORTH code examples and patterns |
+
+### 🧪 Tests & Test Harness
+
+Test documentation and examples:
+
+| Document | Purpose |
+|----------|---------|
+| [TEST-HARNESS.md](tests/TEST-HARNESS.md) | FORTH test harness documentation |
+| [test-if-then.md](tests/test-if-then.md) | IF/THEN test examples |
+| [test-stack-basics.md](tests/test-stack-basics.md) | Stack operation tests |
+| [test-arithmetic-basic.md](tests/test-arithmetic-basic.md) | Arithmetic operation tests |
+| [test-boolean.md](tests/test-boolean.md) | Boolean operation tests |
+| [test-numbers.md](tests/test-numbers.md) | Number handling tests |
+| [test-memory-cells.md](tests/test-memory-cells.md) | Memory cell tests |
+| [test-word-definition.md](tests/test-word-definition.md) | Word definition tests |
+| [test-exception-handling.md](tests/test-exception-handling.md) | Exception handling tests |
+| [test-do-loop.md](tests/test-do-loop.md) | DO...LOOP tests |
+
+### 📚 Archive
+
+Documentation from predecessor projects:
+
+- **Bashforth Documentation** - Complete documentation of bashforth v0.63a implementation
+  - Located in [archive/bashforth/](archive/bashforth/)
+  - 5 document types × 5 versions each
+  - ~144,000 lines of technical analysis
+
+---
+
+## 🎯 Quick Navigation by Role
+
+### For New Users
+1. Read [00-GETTING-STARTED.md](guides/00-GETTING-STARTED.md)
+2. Study [02-LANGUAGE-GUIDE.md](guides/02-LANGUAGE-GUIDE.md)
+3. Try [05-CODE-EXAMPLES.md](examples/05-CODE-EXAMPLES.md)
+
+### For Developers
+1. Review [03-IMPLEMENTATION-GUIDE.md](api/03-IMPLEMENTATION-GUIDE.md)
+2. Check [06-API-REFERENCE.md](api/06-API-REFERENCE.md)
+3. Read [04-STANDARD-WORDS.md](api/04-STANDARD-WORDS.md)
+
+### For Feature Developers
+1. Check [IF_IMPLEMENTATION_SUMMARY.md](features/IF_IMPLEMENTATION_SUMMARY.md)
+2. Review test patterns in [tests/test-if-then.md](tests/test-if-then.md)
+3. Study [FORTH_IF_TEST_EXAMPLES.md](features/FORTH_IF_TEST_EXAMPLES.md)
+
+### For QA/Testers
+1. Review [TEST-HARNESS.md](tests/TEST-HARNESS.md)
+2. Check test examples in [tests/](tests/)
+3. Study [IF_EXECUTION_DEMO.md](features/IF_EXECUTION_DEMO.md)
+
+---
+
+## 📋 Directory Structure
+
+```
+docs/
+├── README.md                          (this file)
+├── _INDEX.md                          (master documentation index)
+│
+├── guides/                            (User guides and tutorials)
+│   ├── 00-GETTING-STARTED.md
+│   ├── 02-LANGUAGE-GUIDE.md
+│   ├── INDEX.md
+│   ├── DOCUMENTATION-SUMMARY.md
+│   └── README-REFERENCE.md
+│
+├── api/                               (API and Implementation docs)
+│   ├── 03-IMPLEMENTATION-GUIDE.md
+│   ├── 04-STANDARD-WORDS.md
+│   └── 06-API-REFERENCE.md
+│
+├── features/                          (Feature-specific documentation)
+│   ├── IF_IMPLEMENTATION_SUMMARY.md
+│   ├── FORTH_IF_TEST_EXAMPLES.md
+│   └── IF_EXECUTION_DEMO.md
+│
+├── examples/                          (Code examples and patterns)
+│   └── 05-CODE-EXAMPLES.md
+│
+├── tests/                             (Test documentation)
+│   ├── TEST-HARNESS.md
+│   ├── test-if-then.md
+│   ├── test-stack-basics.md
+│   ├── test-arithmetic-basic.md
+│   ├── test-boolean.md
+│   ├── test-numbers.md
+│   ├── test-memory-cells.md
+│   ├── test-word-definition.md
+│   ├── test-exception-handling.md
+│   └── test-do-loop.md
+│
+└── archive/                           (Legacy documentation)
+    └── bashforth/                     (Bashforth v0.63a documentation)
+        ├── Beginners_Guide_v*.md
+        ├── Comparison_To_Standard_Forth_v*.md
+        ├── Detailed_Low_Level_Description_v*.md
+        ├── Forth_Implementation_Specification_v*.md
+        ├── Language_Agnostic_Design_v*.md
+        └── DOCUMENTATION-TEMPLATE.md
+```
+
+---
+
+## 🔄 Documentation Categories
+
+### User-Facing Documentation
+- Guides for installation, setup, and basic usage
+- Language reference and tutorials
+- Code examples and patterns
+
+### Developer-Facing Documentation
+- API reference for Java integration
+- Implementation details and architecture
+- Standard words reference
+
+### Feature Documentation
+- Feature-specific guides and examples
+- Verification and testing results
+- Architecture decisions
+
+### Test Documentation
+- Test framework and harness documentation
+- Individual test suites and examples
+- Test execution patterns
+
+### Archived Documentation
+- Legacy bashforth implementation documentation
+- Reference material from predecessor projects
+- Historical design decisions
+
+---
+
+## 📝 Latest Updates
+
+### Version 0.0.2 (October 3, 2026)
+- **New:** IF/ELSE/THEN control flow implementation
+  - Feature documentation complete
+  - Test examples for standard FORTH semantics
+  - Live execution demonstration
+- **Reorganized:** Documentation structure for better navigation
+- **Added:** Feature-specific documentation directory
+
+### Version 0.0.1 (July 30, 2026)
+- Initial check-in
+- Core FORTH interpreter functionality
+- Comprehensive test suites
+
+---
+
+## 🎓 Learning Resources
+
+### Starting Points
+1. **New to FORTH?** → [02-LANGUAGE-GUIDE.md](guides/02-LANGUAGE-GUIDE.md)
+2. **Getting started?** → [00-GETTING-STARTED.md](guides/00-GETTING-STARTED.md)
+3. **Want examples?** → [05-CODE-EXAMPLES.md](examples/05-CODE-EXAMPLES.md)
+
+### Deep Dives
+1. **Architecture details** → [03-IMPLEMENTATION-GUIDE.md](api/03-IMPLEMENTATION-GUIDE.md)
+2. **API reference** → [06-API-REFERENCE.md](api/06-API-REFERENCE.md)
+3. **FORTH standard words** → [04-STANDARD-WORDS.md](api/04-STANDARD-WORDS.md)
+
+### Feature Study
+1. **IF statement** → [features/](features/)
+2. **Test patterns** → [tests/](tests/)
+3. **Execution demo** → [features/IF_EXECUTION_DEMO.md](features/IF_EXECUTION_DEMO.md)
+
+---
+
+## 📞 Support
+
+For questions or issues:
+1. Check the relevant documentation file
+2. Review code examples in [examples/](examples/)
+3. Study test cases in [tests/](tests/)
+4. Consult API documentation in [api/](api/)
+
+---
+
+## 📄 License
+
+All documentation in this directory is provided under the same license as the GD-FORTH project.
+See the LICENSE.md file in the project root for details.
+
+---
+
+**Last Updated:** October 3, 2026  
+**Documentation Version:** 0.0.2  
+**GD-FORTH Version:** 0.0.2

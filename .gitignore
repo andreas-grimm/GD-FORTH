@@ -1,0 +1,15 @@
+# Ignore for the Java main Components (blocking IntelliJ, Eclipse, and Maven targets)
+app
+.classpath
+.project
+.settings
+target
+build
+*.iml
+.idea
+test_output.txt
+@eaDir
+
+# Ignore of the VSC Extension
+node_modules
+*.vsix

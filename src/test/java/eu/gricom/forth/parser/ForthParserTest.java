@@ -2,9 +2,11 @@ package eu.gricom.forth.parser;
 
 import eu.gricom.forth.error.SyntaxErrorException;
 import eu.gricom.forth.statements.Statement;
+import eu.gricom.forth.statements.controlFlow.IfStatement;
 import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.tokenizer.Token;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -1276,5 +1278,215 @@ class ForthParserTest {
         List<Statement> statements = parser.parse();
         assertNotNull(statements);
         assertTrue(statements.size() > 0);
+    }
+
+    // ================= IF/THEN CONTROL FLOW TESTS =================
+
+    @Test
+    @DisplayName("Should parse simple IF...THEN structure")
+    void testParseSimpleIfThen() throws Exception {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("IF", ForthTokenType.IF, 1));
+        tokens.add(new Token("42", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token(".", ForthTokenType.PRINT, 1));
+        tokens.add(new Token("THEN", ForthTokenType.THEN, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+
+        boolean hasIfStatement = false;
+        for (Statement stmt : statements) {
+            if (stmt instanceof IfStatement) {
+                hasIfStatement = true;
+                break;
+            }
+        }
+        assertTrue(hasIfStatement, "Parser should create IfStatement for IF...THEN block");
+    }
+
+    @Test
+    @DisplayName("Should parse IF...ELSE...THEN structure")
+    void testParseIfElseThen() throws Exception {
+        tokens.add(new Token("0", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("IF", ForthTokenType.IF, 1));
+        tokens.add(new Token("42", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token(".", ForthTokenType.PRINT, 1));
+        tokens.add(new Token("ELSE", ForthTokenType.ELSE, 1));
+        tokens.add(new Token("99", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token(".", ForthTokenType.PRINT, 1));
+        tokens.add(new Token("THEN", ForthTokenType.THEN, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+
+        boolean hasIfStatement = false;
+        for (Statement stmt : statements) {
+            if (stmt instanceof IfStatement) {
+                hasIfStatement = true;
+                break;
+            }
+        }
+        assertTrue(hasIfStatement, "Parser should create IfStatement for IF...ELSE...THEN block");
+    }
+
+    @Test
+    @DisplayName("Should parse nested IF statements")
+    void testParseNestedIfStatements() throws Exception {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("IF", ForthTokenType.IF, 1));
+        tokens.add(new Token("2", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("IF", ForthTokenType.IF, 1));
+        tokens.add(new Token("42", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("THEN", ForthTokenType.THEN, 1));
+        tokens.add(new Token("THEN", ForthTokenType.THEN, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+
+        // Count IfStatement instances
+        int ifCount = 0;
+        for (Statement stmt : statements) {
+            if (stmt instanceof IfStatement) {
+                ifCount++;
+            }
+        }
+        assertEquals(1, ifCount, "Outer IF should be one IfStatement; inner IF is in its branch");
+    }
+
+    @Test
+    @DisplayName("Should throw SyntaxErrorException for IF without THEN")
+    void testIfWithoutThenThrowsError() {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("IF", ForthTokenType.IF, 1));
+        tokens.add(new Token("42", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        assertThrows(SyntaxErrorException.class, () -> parser.parse(),
+                "Parser should throw SyntaxErrorException for IF without matching THEN");
+    }
+
+    @Test
+    @DisplayName("Should throw SyntaxErrorException for unexpected THEN without IF")
+    void testThenWithoutIfThrowsError() {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("THEN", ForthTokenType.THEN, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        assertThrows(SyntaxErrorException.class, () -> parser.parse(),
+                "Parser should throw SyntaxErrorException for THEN without matching IF");
+    }
+
+    @Test
+    @DisplayName("Should throw SyntaxErrorException for unexpected ELSE without IF")
+    void testElseWithoutIfThrowsError() {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("ELSE", ForthTokenType.ELSE, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        assertThrows(SyntaxErrorException.class, () -> parser.parse(),
+                "Parser should throw SyntaxErrorException for ELSE without matching IF");
+    }
+
+    @Test
+    @DisplayName("Should parse IF...THEN with complex true-branch")
+    void testIfThenComplexTrueBranch() throws Exception {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("IF", ForthTokenType.IF, 1));
+        tokens.add(new Token("10", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("20", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("+", ForthTokenType.PLUS, 1));
+        tokens.add(new Token(".", ForthTokenType.PRINT, 1));
+        tokens.add(new Token("DUP", ForthTokenType.DUPE, 1));
+        tokens.add(new Token("THEN", ForthTokenType.THEN, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+
+        boolean hasIfStatement = false;
+        for (Statement stmt : statements) {
+            if (stmt instanceof IfStatement) {
+                hasIfStatement = true;
+                break;
+            }
+        }
+        assertTrue(hasIfStatement, "Parser should handle complex true-branch");
+    }
+
+    @Test
+    @DisplayName("Should parse IF...ELSE...THEN with complex branches")
+    void testIfElseThenComplexBranches() throws Exception {
+        tokens.add(new Token("1", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("IF", ForthTokenType.IF, 1));
+        tokens.add(new Token("10", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("20", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("+", ForthTokenType.PLUS, 1));
+        tokens.add(new Token("ELSE", ForthTokenType.ELSE, 1));
+        tokens.add(new Token("100", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("200", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("-", ForthTokenType.MINUS, 1));
+        tokens.add(new Token("THEN", ForthTokenType.THEN, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+
+        boolean hasIfStatement = false;
+        for (Statement stmt : statements) {
+            if (stmt instanceof IfStatement) {
+                hasIfStatement = true;
+                break;
+            }
+        }
+        assertTrue(hasIfStatement, "Parser should handle complex true and false branches");
+    }
+
+    @Test
+    @DisplayName("Should parse IF after other statements")
+    void testIfFollowingOtherStatements() throws Exception {
+        tokens.add(new Token("10", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("20", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("+", ForthTokenType.PLUS, 1));
+        tokens.add(new Token("DUP", ForthTokenType.DUPE, 1));
+        tokens.add(new Token("0", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token(">", ForthTokenType.GREATER_THAN, 1));
+        tokens.add(new Token("IF", ForthTokenType.IF, 1));
+        tokens.add(new Token("42", ForthTokenType.NUMBER, 1));
+        tokens.add(new Token("THEN", ForthTokenType.THEN, 1));
+        tokens.add(new Token("", ForthTokenType.EOP, 1));
+        parser = new ForthParser(tokens);
+
+        List<Statement> statements = parser.parse();
+        assertNotNull(statements);
+        assertTrue(statements.size() > 0);
+
+        // Should have parsed the preceding statements and the IF statement
+        boolean hasIfStatement = false;
+        int nonIfStatements = 0;
+        for (Statement stmt : statements) {
+            if (stmt instanceof IfStatement) {
+                hasIfStatement = true;
+            } else if (!(stmt instanceof eu.gricom.forth.statements.EmptyStatement)) {
+                nonIfStatements++;
+            }
+        }
+        assertTrue(hasIfStatement, "Parser should create IfStatement");
+        assertTrue(nonIfStatements > 0, "Parser should have preceding statements");
     }
 }

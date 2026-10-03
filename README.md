@@ -2,9 +2,9 @@
 
 &copy; 2020 - 2026 Andreas Grimm | Use according to the included licence file ([LICENSE.md](LICENSE.md))
 
-**Version:** 0.0.1  
-**Status:** First check-in  
-**Last Updated:** 2026-07-30
+**Version:** 0.0.2  
+**Status:** IF/ELSE/THEN Control Flow Implemented  
+**Last Updated:** 2026-10-03
 
 ---
 
@@ -15,13 +15,24 @@
 ### Key Features
 
 - ✅ **Interactive Line Editor** — Build and test programs without file setup
+- ✅ **IF/ELSE/THEN Control Flow** — Full conditional execution with arbitrary nesting
+  - Simple IF...THEN conditionals
+  - IF...ELSE...THEN branching
+  - Nested IF statements (unlimited depth)
+  - Compatible with comparison operators (>, <, =, etc.)
+- ✅ **Arithmetic Operations** — +, -, *, /, MOD, and more
+- ✅ **Stack Operations** — DUP, DROP, SWAP, OVER, ROT, NIP, TUCK, PICK, ROLL, DEPTH
+- ✅ **Comparison Operations** — =, <>, <, >, <=, >=, 0=, 0<>, 0>, 0<
+- ✅ **Variable Support** — VARIABLE definition and access
+- ✅ **Memory Operations** — FETCH (@), STORE (!)
+- ✅ **I/O Operations** — PRINT (.), CARRIAGE_RETURN (CR), QUESTION (?)
 
-Objective for the implementation
-- ✅ **Comprehensive Forth Support**
-- ✅ **Type Safety**
-- ✅ **Advanced Features**
-- ✅ **Production Ready**
-- ✅ **Well Documented**
+Objectives for full implementation:
+- ✅ **Comprehensive Forth Support** (In Progress - IF/ELSE/THEN complete)
+- ✅ **Type Safety** (Integer, Long, Real, Boolean, String types)
+- ✅ **Advanced Features** (Control flow, word definitions)
+- ✅ **Production Ready** (1809 tests passing)
+- ✅ **Well Documented** (API docs, user guides, test examples)
 
 # Differences to existing Standards:
 
@@ -93,13 +104,10 @@ java -jar FORTH-0.0.1-jar-with-dependencies.jar -r -q program.fs
 
 | Topic | File |
 |-------|------|
-| User Manual |  |
-| Language Ref |  |
-| Coding Standards |  |
-| Architecture |  |
+| IF Implementation Details | [docs/IF_IMPLEMENTATION_SUMMARY.md](docs/IF_IMPLEMENTATION_SUMMARY.md) |
+| IF Test Examples | [docs/FORTH_IF_TEST_EXAMPLES.md](docs/FORTH_IF_TEST_EXAMPLES.md) |
+| IF Execution Demo | [docs/IF_EXECUTION_DEMO.md](docs/IF_EXECUTION_DEMO.md) |
 | Version History | [CHANGELOG.md](CHANGELOG.md) |
-| Test Info |  |
-| Upgrade Plans |  |
 | License | [LICENSE.md](LICENSE.md) |
 
 ---

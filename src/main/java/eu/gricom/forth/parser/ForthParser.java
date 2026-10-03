@@ -7,6 +7,7 @@ import eu.gricom.forth.memoryManager.Variables;
 import eu.gricom.forth.statements.*;
 import eu.gricom.forth.statements.arithmetics.*;
 import eu.gricom.forth.statements.comparison.*;
+import eu.gricom.forth.statements.controlFlow.IfStatement;
 import eu.gricom.forth.statements.inOut.*;
 import eu.gricom.forth.statements.mathematics.*;
 import eu.gricom.forth.statements.stack.*;
@@ -16,6 +17,7 @@ import eu.gricom.forth.tokenizer.ForthTokenType;
 import eu.gricom.forth.tokenizer.Token;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -73,14 +75,24 @@ public class ForthParser implements Parser {
         List<Statement> aoStatements = new ArrayList<>();
         _iPosition = 0;
 
-        int iOrgPosition;
-        int iFileId;
-
         _oLogger.debug("Start parsing...");
-        boolean bContinue = true;
 
-        while (bContinue && getToken(0).getType() != ForthTokenType.EOP) {
-            switch (getToken(0).getType()) {
+        while (getToken(0).getType() != ForthTokenType.EOP) {
+            aoStatements.add(parseOneStatement());
+        }
+
+        Token oEmptyToken = new Token("", ForthTokenType.EMPTY_LINE, -1);
+        aoStatements.add(new EmptyStatement(oEmptyToken, _iPosition++));
+
+        for (Statement oStatement: aoStatements) {
+            _oLineNumber.putStatementNumber(oStatement.getTokenNumber(), aoStatements.indexOf(oStatement));
+        }
+
+        return aoStatements;
+    }
+
+    private Statement parseOneStatement() throws SyntaxErrorException {
+        switch (getToken(0).getType()) {
 /*
                 // PRAGMA Token: Change execution behaviour of the program.
                 case PRAGMA:
@@ -108,289 +120,233 @@ public class ForthParser implements Parser {
                     _iPosition++;
                     break;
 */
-                // Variable Statements
-                case STORE:
-                case TWO_STORE:
-                case CHAR_STORE:
-                    aoStatements.add(new StoreStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            // Control Flow: IF...THEN and IF...ELSE...THEN
+            case IF:
+                return parseIfStatement();
 
-                case FETCH:
-                case TWO_FETCH:
-                case CHAR_FETCH:
-                    aoStatements.add(new FetchStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            // Variable Statements
+            case STORE:
+            case TWO_STORE:
+            case CHAR_STORE:
+                _iPosition++;
+                return new StoreStatement(getToken(-1).getType(), _iPosition - 1);
 
-                // PRINT Token: print to the terminal
-                case CARRIAGE_RETURN:
-                    aoStatements.add(new CarriageReturnStatement(getToken(0), _iPosition));
-                    _iPosition++;
-                    break;
+            case FETCH:
+            case TWO_FETCH:
+            case CHAR_FETCH:
+                _iPosition++;
+                return new FetchStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case PRINT:
-                    aoStatements.add(new PrintStatement(getToken(0), _iPosition));
-                    _iPosition++;
-                    break;
+            // PRINT Token: print to the terminal
+            case CARRIAGE_RETURN:
+                _iPosition++;
+                return new CarriageReturnStatement(getToken(-1), _iPosition - 1);
 
-                // Question operator: Debugging operator that fetches and prints a variable value
-                // Stack: ( address -- ) - Pops variable address, fetches and prints value
-                case QUESTION:
-                    aoStatements.add(new QuestionStatement(getToken(0), _iPosition));
-                    _iPosition++;
-                    break;
+            case PRINT:
+                _iPosition++;
+                return new PrintStatement(getToken(-1), _iPosition - 1);
 
-                case PRINT_KEEP_STACK:
-                    aoStatements.add(new PrintKeepStackStatement(getToken(0), _iPosition));
-                    _iPosition++;
-                    break;
+            // Question operator: Debugging operator that fetches and prints a variable value
+            // Stack: ( address -- ) - Pops variable address, fetches and prints value
+            case QUESTION:
+                _iPosition++;
+                return new QuestionStatement(getToken(-1), _iPosition - 1);
 
-                // NUMBER Token: In Forth, a number is pushed into the stack. This is done in the NUMBER statement
-                case NUMBER:
-                    aoStatements.add(parseNumberStatement());
-                    _iPosition++;
-                    break;
+            case PRINT_KEEP_STACK:
+                _iPosition++;
+                return new PrintKeepStackStatement(getToken(-1), _iPosition - 1);
 
-                // Multiple Tokens: Can be one of these: +, - , *, /, MOD
-                case PLUS:
-                    aoStatements.add(new PlusStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            // NUMBER Token: In Forth, a number is pushed into the stack. This is done in the NUMBER statement
+            case NUMBER:
+                Statement oNumberStmt = parseNumberStatement();
+                _iPosition++;
+                return oNumberStmt;
 
-                case MINUS:
-                    aoStatements.add(new MinusStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            // Multiple Tokens: Can be one of these: +, - , *, /, MOD
+            case PLUS:
+                _iPosition++;
+                return new PlusStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case MULTIPLY:
-                    aoStatements.add(new MultiplyStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case MINUS:
+                _iPosition++;
+                return new MinusStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case DIVIDE:
-                    aoStatements.add(new DivideStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case MULTIPLY:
+                _iPosition++;
+                return new MultiplyStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case MOD:
-                    aoStatements.add(new ModuloStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case DIVIDE:
+                _iPosition++;
+                return new DivideStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case ONE_MINUS:
-                    aoStatements.add(new OneMinusStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case MOD:
+                _iPosition++;
+                return new ModuloStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case ONE_PLUS:
-                    aoStatements.add(new OnePlusStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case ONE_MINUS:
+                _iPosition++;
+                return new OneMinusStatement(getToken(-1).getType(), _iPosition - 1);
 
+            case ONE_PLUS:
+                _iPosition++;
+                return new OnePlusStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case TWO_DIVIDE:
-                    aoStatements.add(new TwoDivideStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case TWO_DIVIDE:
+                _iPosition++;
+                return new TwoDivideStatement(getToken(-1).getType(), _iPosition - 1);
 
+            case TWO_MULTIPLY:
+                _iPosition++;
+                return new TwoMultiplyStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case TWO_MULTIPLY:
-                    aoStatements.add(new TwoMultiplyStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            // Multiple Tokens: Can be one of these: =, <, > , <>, <=, >=
+            case EQUALS:
+                _iPosition++;
+                return new EqualsStatement(getToken(-1).getType(), _iPosition - 1);
 
+            case LESS_THAN:
+                _iPosition++;
+                return new LessThanStatement(getToken(-1).getType(), _iPosition - 1);
 
-                // Multiple Tokens: Can be one of these: =, <, > , <>, <=, >=
-                case EQUALS:
-                    aoStatements.add(new EqualsStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case GREATER_THAN:
+                _iPosition++;
+                return new GreaterThanStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case LESS_THAN:
-                    aoStatements.add(new LessThanStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case NOT_EQUALS:
+                _iPosition++;
+                return new NotEqualsStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case GREATER_THAN:
-                    aoStatements.add(new GreaterThanStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case LESS_EQUAL:
+                _iPosition++;
+                return new LessEqualStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case NOT_EQUALS:
-                    aoStatements.add(new NotEqualsStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case GREATER_EQUAL:
+                _iPosition++;
+                return new GreaterEqualStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case LESS_EQUAL:
-                    aoStatements.add(new LessEqualStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case DOUBLE_ZERO_EQUALS:
+            case ZERO_EQUALS:
+                _iPosition++;
+                return new ZeroEqualsStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case GREATER_EQUAL:
-                    aoStatements.add(new GreaterEqualStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case DOUBLE_ZERO_LESS:
+            case ZERO_LESS:
+                _iPosition++;
+                return new ZeroLessStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case DOUBLE_ZERO_EQUALS:
-                case ZERO_EQUALS:
-                    aoStatements.add(new ZeroEqualsStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case ZERO_GREATER:
+                _iPosition++;
+                return new ZeroGreaterStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case DOUBLE_ZERO_LESS:
-                case ZERO_LESS:
-                    aoStatements.add(new ZeroLessStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case ZERO_NOT_EQUALS:
+                _iPosition++;
+                return new ZeroNotEqualsStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case ZERO_GREATER:
-                    aoStatements.add(new ZeroGreaterStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case DUPE:
+                _iPosition++;
+                return new DupeStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case ZERO_NOT_EQUALS:
-                    aoStatements.add(new ZeroNotEqualsStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case QUESTION_DUPE:
+                _iPosition++;
+                return new QuestionDupeStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case DUPE:
-                    aoStatements.add(new DupeStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case DROP:
+                _iPosition++;
+                return new DropStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case QUESTION_DUPE:
-                    aoStatements.add(new QuestionDupeStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case TWO_DROP:
+                _iPosition++;
+                return new TwoDropStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case DROP:
-                    aoStatements.add(new DropStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case SWAP:
+                _iPosition++;
+                return new SwapStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case TWO_DROP:
-                    aoStatements.add(new TwoDropStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case TWO_SWAP:
+                _iPosition++;
+                return new TwoSwapStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case SWAP:
-                    aoStatements.add(new SwapStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case OVER:
+                _iPosition++;
+                return new OverStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case TWO_SWAP:
-                    aoStatements.add(new TwoSwapStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case TWO_OVER:
+                _iPosition++;
+                return new TwoOverStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case OVER:
-                    aoStatements.add(new OverStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case ROT:
+                _iPosition++;
+                return new RotStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case TWO_OVER:
-                    aoStatements.add(new TwoOverStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case TWO_ROT:
+                _iPosition++;
+                return new TwoRotStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case ROT:
-                    aoStatements.add(new RotStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case MINUS_ROT:
+                _iPosition++;
+                return new MinusRotStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case TWO_ROT:
-                    aoStatements.add(new TwoRotStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case NIP:
+                _iPosition++;
+                return new NipStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case MINUS_ROT:
-                    aoStatements.add(new MinusRotStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case TUCK:
+                _iPosition++;
+                return new TuckStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case NIP:
-                    aoStatements.add(new NipStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case PICK:
+                _iPosition++;
+                return new PickStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case TUCK:
-                    aoStatements.add(new TuckStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case ROLL:
+                _iPosition++;
+                return new RollStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case PICK:
-                    aoStatements.add(new PickStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case DEPTH:
+                _iPosition++;
+                return new DepthStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case ROLL:
-                    aoStatements.add(new RollStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case ABS:
+                _iPosition++;
+                return new AbsStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case DEPTH:
-                    aoStatements.add(new DepthStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case MAX:
+                _iPosition++;
+                return new MaxStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case ABS:
-                    aoStatements.add(new AbsStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case MIN:
+                _iPosition++;
+                return new MinStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case MAX:
-                    aoStatements.add(new MaxStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case NEGATE:
+                _iPosition++;
+                return new NegateStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case MIN:
-                    aoStatements.add(new MinStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            case SIGN:
+                _iPosition++;
+                return new SignStatement(getToken(-1).getType(), _iPosition - 1);
 
-                case NEGATE:
-                    aoStatements.add(new NegateStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            // Variable Definition: VARIABLE token creates a new variable
+            // Syntax: VARIABLE variableName
+            // The next token contains the variable name; both are consumed.
+            case VARIABLE:
+                String strVariableName = getToken(1).getText();
+                Statement oVarStmt = new VariableStatement(getToken(0), _iPosition, strVariableName);
+                _iPosition = _iPosition + 2;
+                return oVarStmt;
 
-                case SIGN:
-                    aoStatements.add(new SignStatement(getToken(0).getType(), _iPosition));
-                    _iPosition++;
-                    break;
+            // Variable Access: WORD token accesses a previously defined variable
+            // Pushes the variable's index to the stack for use with FETCH (@) and STORE (!)
+            case WORD:
+                _iPosition++;
+                return new WordStatement(getToken(-1), _iPosition - 1);
 
-                // Variable Definition: VARIABLE token creates a new variable
-                // Syntax: VARIABLE variableName
-                // The next token contains the variable name; both are consumed.
-                case VARIABLE:
-                    String strVariableName = getToken(1).getText();
-                    aoStatements.add(new VariableStatement(getToken(0),_iPosition,strVariableName));
-                    _iPosition = _iPosition + 2;
-                    break;
-
-                // Variable Access: WORD token accesses a previously defined variable
-                // Pushes the variable's index to the stack for use with FETCH (@) and STORE (!)
-                case WORD:
-                    aoStatements.add(new WordStatement(getToken(0),_iPosition));
-                    _iPosition++;
-                    break;
-
-                // No Token identified, Syntax Error
-                default:
-                    throw new SyntaxErrorException("Incorrect Command: " + getToken(0).getLine() + ": ["
-                            + getToken(0).getType() + "] <"
-                            + getToken(0).getLine() + ">");
-            }
+            // No Token identified, Syntax Error
+            default:
+                throw new SyntaxErrorException("Incorrect Command: " + getToken(0).getLine() + ": ["
+                        + getToken(0).getType() + "] <"
+                        + getToken(0).getLine() + ">");
         }
-
-        Token oEmptyToken = new Token("", ForthTokenType.EMPTY_LINE, -1);
-        aoStatements.add(new EmptyStatement(oEmptyToken, _iPosition++));
-
-        for (Statement oStatement: aoStatements) {
-            _oLineNumber.putStatementNumber(oStatement.getTokenNumber(), aoStatements.indexOf(oStatement));
-        }
-
-        return aoStatements;
     }
 
     // The following functions each represent one grammatical part of the
@@ -434,6 +390,74 @@ public class ForthParser implements Parser {
         }
 
         return new NumberStatement(iNumber, _iPosition);
+    }
+
+    /**
+     * Parse an IF statement with optional ELSE clause.
+     * <p>
+     * Syntax: IF ... THEN or IF ... ELSE ... THEN
+     * <p>
+     * The parser recursively collects statements for the true-branch until
+     * ELSE or THEN is encountered, then optionally collects the false-branch
+     * until THEN. This allows nested IF blocks to work correctly.
+     *
+     * @return the parsed IfStatement
+     * @throws SyntaxErrorException if IF/THEN structure is malformed
+     */
+    private Statement parseIfStatement() throws SyntaxErrorException {
+        Token oIfToken = getToken(0);
+        int iIfPosition = _iPosition;
+        _iPosition++; // consume IF
+
+        List<Statement> aoTrueBranch = parseBlockUntil(ForthTokenType.ELSE, ForthTokenType.THEN);
+        List<Statement> aoFalseBranch = new ArrayList<>();
+
+        if (getToken(0).getType() == ForthTokenType.ELSE) {
+            _iPosition++; // consume ELSE
+            aoFalseBranch = parseBlockUntil(ForthTokenType.THEN);
+        }
+
+        if (getToken(0).getType() != ForthTokenType.THEN) {
+            throw new SyntaxErrorException("IF without matching THEN at token [" + iIfPosition + "]");
+        }
+        _iPosition++; // consume THEN
+
+        return new IfStatement(oIfToken, iIfPosition, aoTrueBranch, aoFalseBranch);
+    }
+
+    /**
+     * Parse a block of statements until one of the terminator tokens is found.
+     * <p>
+     * Used by parseIfStatement() to collect the true-branch and false-branch
+     * statements without consuming the terminator. Recursive: if a nested IF
+     * is encountered, it fully parses and consumes the nested IF...THEN block.
+     *
+     * @param aoTerminators The token types that mark the end of this block (e.g., ELSE, THEN)
+     * @return List of statements parsed before encountering a terminator
+     * @throws SyntaxErrorException if block ends unexpectedly (EOP)
+     */
+    private List<Statement> parseBlockUntil(final ForthTokenType... aoTerminators) throws SyntaxErrorException {
+        List<Statement> aoStatements = new ArrayList<>();
+
+        while (!matchesAny(getToken(0).getType(), aoTerminators)) {
+            if (getToken(0).getType() == ForthTokenType.EOP) {
+                throw new SyntaxErrorException("Unexpected end of program inside IF block");
+            }
+            aoStatements.add(parseOneStatement());
+        }
+
+        return aoStatements;
+    }
+
+    /**
+     * Helper to check if a token type matches any of the given types.
+     *
+     * @param oTokenType The token type to check
+     * @param aoTerminators The array of token types to match against
+     * @return true if oTokenType matches any in aoTerminators
+     */
+    private boolean matchesAny(final ForthTokenType oTokenType, final ForthTokenType... aoTerminators) {
+        return Arrays.asList(aoTerminators).contains(oTokenType);
     }
 
     /**
