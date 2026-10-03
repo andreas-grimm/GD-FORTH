@@ -8,6 +8,14 @@ import eu.gricom.forth.statements.*;
 import eu.gricom.forth.statements.arithmetics.*;
 import eu.gricom.forth.statements.comparison.*;
 import eu.gricom.forth.statements.controlFlow.IfStatement;
+import eu.gricom.forth.statements.controlFlow.DoStatement;
+import eu.gricom.forth.statements.controlFlow.CurrentLoopIndexStatement;
+import eu.gricom.forth.statements.controlFlow.OuterLoopIndexStatement;
+import eu.gricom.forth.statements.controlFlow.LoopStatement;
+import eu.gricom.forth.statements.controlFlow.PlusLoopStatement;
+import eu.gricom.forth.statements.controlFlow.UnloopStatement;
+import eu.gricom.forth.error.SyntaxErrorException;
+import eu.gricom.forth.error.MissingLoopException;
 import eu.gricom.forth.statements.inOut.*;
 import eu.gricom.forth.statements.mathematics.*;
 import eu.gricom.forth.statements.stack.*;
@@ -123,6 +131,32 @@ public class ForthParser implements Parser {
             // Control Flow: IF...THEN and IF...ELSE...THEN
             case IF:
                 return parseIfStatement();
+
+            // Control Flow: DO...LOOP and DO...+LOOP
+            case DO:
+                return parseDoStatement();
+
+            // Loop Index Access: I (current) and J (outer)
+            case I:
+                _iPosition++;
+                return new CurrentLoopIndexStatement(getToken(-1), _iPosition - 1);
+
+            case J:
+                _iPosition++;
+                return new OuterLoopIndexStatement(getToken(-1), _iPosition - 1);
+
+            // Loop Control: LOOP, +LOOP, UNLOOP
+            case LOOP:
+                _iPosition++;
+                return new LoopStatement(getToken(-1), _iPosition - 1);
+
+            case PLUS_LOOP:
+                _iPosition++;
+                return new PlusLoopStatement(getToken(-1), _iPosition - 1);
+
+            case UNLOOP:
+                _iPosition++;
+                return new UnloopStatement(getToken(-1), _iPosition - 1);
 
             // Variable Statements
             case STORE:
@@ -423,6 +457,38 @@ public class ForthParser implements Parser {
         _iPosition++; // consume THEN
 
         return new IfStatement(oIfToken, iIfPosition, aoTrueBranch, aoFalseBranch);
+    }
+
+    /**
+     * Parse a DO...LOOP or DO...+LOOP statement.
+     * <p>
+     * Syntax: DO ... LOOP or DO ... +LOOP
+     * <p>
+     * The parser collects all statements between DO and LOOP/+LOOP into the loop body.
+     * This allows nested DO blocks and ensures the complete loop structure is parsed
+     * as a single DoStatement object.
+     *
+     * @return the parsed DoStatement
+     * @throws SyntaxErrorException if DO/LOOP structure is malformed
+     */
+    private Statement parseDoStatement() throws SyntaxErrorException {
+        Token oDoToken = getToken(0);
+        int iDoPosition = _iPosition;
+        _iPosition++; // consume DO
+
+        // Parse loop body until LOOP or +LOOP is found
+        List<Statement> aoLoopBody = parseBlockUntil(ForthTokenType.LOOP, ForthTokenType.PLUS_LOOP);
+
+        // Verify that LOOP or +LOOP is present
+        if (getToken(0).getType() != ForthTokenType.LOOP &&
+            getToken(0).getType() != ForthTokenType.PLUS_LOOP) {
+            throw new SyntaxErrorException("DO without matching LOOP or +LOOP at token [" + iDoPosition + "]");
+        }
+
+        // Consume the LOOP or +LOOP token
+        _iPosition++;
+
+        return new DoStatement(oDoToken, iDoPosition, aoLoopBody);
     }
 
     /**

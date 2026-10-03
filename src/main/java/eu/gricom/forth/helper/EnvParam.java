@@ -6,8 +6,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ * Configuration parameter loader that reads from config.yaml in the resources directory.
+ *
+ * The config.yaml file is located at src/main/resources/config.yaml during development.
+ * When the application is compiled/packaged, it becomes part of the classpath and is
+ * automatically found by ClassLoader.getResourceAsStream() in both:
+ * - Development: Loads from src/main/resources/config.yaml
+ * - Production: Loads from the JAR's classpath (compiled resources)
+ *
+ * This dual-path approach ensures the configuration works seamlessly across all deployment scenarios
+ * without requiring any path configuration changes.
+ */
 public class EnvParam {
     private static final Logger LOGGER = Logger.getLogger(EnvParam.class.getName());
+    // Configuration file path - loaded from classpath (src/main/resources/ in development)
     private static final String CONFIG_FILE_PATH = "config.yaml";
     private static EnvParam _oInstance;
     private static String _strConfigGroup = "application";
@@ -138,7 +151,10 @@ public class EnvParam {
     }
 
     public static int getMaxBcdDigits() {
-        return getInt("max_bcd_digits");
+        setConfigGroup("variables");
+        int iResult = getInt("max_bcd_digits");
+        setConfigGroup("application");
+        return iResult;
     }
 
     @Deprecated(since = "1.0", forRemoval = true)
