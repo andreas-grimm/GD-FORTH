@@ -2,7 +2,86 @@
 
 All notable changes to the GD-FORTH project are documented in this file.
 
-**Last Updated:** 2026-10-03 21:30 UTC
+**Last Updated:** 2026-10-04 15:40 UTC
+
+---
+
+## [0.0.3+] - 2026-10-04 (BEGIN...WHILE...REPEAT Indefinite Loops)
+
+### Summary
+
+Implemented BEGIN...WHILE...REPEAT indefinite loop control structure for GD-FORTH. Enables condition-driven loops with flexible stack-based state management, complementing the existing counted DO...LOOP construct.
+
+### Added
+
+#### Indefinite Loop Control
+- ✅ **BeginStatement.java** - Core indefinite loop implementation
+  - Supports condition-based loops: `BEGIN ... WHILE ... REPEAT`
+  - Condition executes before each iteration
+  - Loop exits when condition flag is false (0)
+  - Loop continues when condition flag is true (non-zero)
+  - Stack behavior: condition part ( ... -- ... flag ), body part ( -- )
+
+#### Parser Integration
+- ✅ **ForthParser.java** enhancements
+  - Added `case BEGIN:` handler in parseOneStatement()
+  - Implemented parseBeginStatement() method
+  - Reuses parseBlockUntil() for condition and body collection
+  - Proper error handling for missing WHILE or REPEAT
+
+#### Comprehensive Testing
+- ✅ **BeginStatementTest.java** - 11 comprehensive unit tests
+  - Single iteration loops
+  - Multiple iteration loops
+  - Zero iteration (empty) loops
+  - Stack preservation during loop execution
+  - Error handling (stack underflow)
+  - Nested indefinite loops
+  - Integration with other statements
+  - FORTH TRUE (-1) flag handling
+
+- ✅ **begin-while-repeat-tests.fs** - FORTH integration tests
+  - Simple countdown loop
+  - Conditional execution loop
+  - Flag variable loop
+  - Nested indefinite loops
+  - Empty loop handling
+
+### Test Results
+- ✅ **11 new unit tests** passing (BeginStatementTest)
+- ✅ **1855 total tests passing** (all suite)
+- ✅ **0 build warnings**, 0 errors
+- ✅ **BUILD SUCCESS**
+
+### Features Verified
+- ✅ Indefinite loops with condition-based exit
+- ✅ Condition and body separated by WHILE keyword
+- ✅ REPEAT unconditionally jumps back to BEGIN
+- ✅ Nested indefinite loops work correctly
+- ✅ Stack preserved across loop iterations
+- ✅ FORTH semantics: TRUE = -1, FALSE = 0, any non-zero = true
+- ✅ Proper error handling for malformed loops
+
+### Implementation Notes
+- **Architecture**: Single BeginStatement class owns condition + body
+- **WHILE/REPEAT**: Parser markers, not Statement classes
+- **No new runtime classes needed**: Uses existing stack
+- **Consistent pattern**: Matches IfStatement and DoStatement design
+- **Junior-friendly code**: Comprehensive comments and clear structure
+
+### Example Usage
+```forth
+\ Countdown from 5 to 1
+5 BEGIN DUP . 1 - DUP 0> WHILE REPEAT
+
+\ Loop with flag variable
+VARIABLE count
+0 count !
+BEGIN count @ 1 + DUP count ! DUP . DUP 5 < WHILE REPEAT
+
+\ Nested indefinite loops
+3 BEGIN DUP . 2 BEGIN DUP . 1 - DUP 0> WHILE REPEAT 1 - DUP 0> WHILE REPEAT
+```
 
 ---
 
