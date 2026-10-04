@@ -10,11 +10,14 @@ import eu.gricom.forth.statements.comparison.*;
 import eu.gricom.forth.statements.controlFlow.IfStatement;
 import eu.gricom.forth.statements.controlFlow.DoStatement;
 import eu.gricom.forth.statements.controlFlow.BeginStatement;
+import eu.gricom.forth.statements.controlFlow.BeginUntilStatement;
+import eu.gricom.forth.statements.controlFlow.BeginAgainStatement;
 import eu.gricom.forth.statements.controlFlow.CurrentLoopIndexStatement;
 import eu.gricom.forth.statements.controlFlow.OuterLoopIndexStatement;
 import eu.gricom.forth.statements.controlFlow.LoopStatement;
 import eu.gricom.forth.statements.controlFlow.PlusLoopStatement;
 import eu.gricom.forth.statements.controlFlow.UnloopStatement;
+import eu.gricom.forth.statements.controlFlow.LeaveStatement;
 import eu.gricom.forth.error.SyntaxErrorException;
 import eu.gricom.forth.error.MissingLoopException;
 import eu.gricom.forth.statements.inOut.*;
@@ -162,6 +165,10 @@ public class ForthParser implements Parser {
             case UNLOOP:
                 _iPosition++;
                 return new UnloopStatement(getToken(-1), _iPosition - 1);
+
+            case LEAVE:
+                _iPosition++;
+                return new LeaveStatement(getToken(-1), _iPosition - 1);
 
             // Variable Statements
             case STORE:
@@ -497,39 +504,63 @@ public class ForthParser implements Parser {
     }
 
     /**
-     * Parse a BEGIN...WHILE...REPEAT statement.
+     * Parse a BEGIN statement with its terminator.
      * <p>
-     * Syntax: BEGIN ... WHILE ... REPEAT
+     * Syntax: BEGIN ... WHILE ... REPEAT (condition at top, may not run)
+     *         BEGIN ... UNTIL           (condition at bottom, always runs once)
+     *         BEGIN ... AGAIN           (infinite loop)
      * <p>
-     * The parser recursively collects statements for the condition part (before WHILE)
-     * and body part (between WHILE and REPEAT) until REPEAT is encountered.
+     * The parser recursively collects statements until WHILE, UNTIL, or AGAIN
+     * is encountered. For WHILE, the block before WHILE is the condition, and
+     * the block between WHILE and REPEAT is the body.
      * This allows nested BEGIN blocks to work correctly.
      *
-     * @return the parsed BeginStatement
-     * @throws SyntaxErrorException if BEGIN/WHILE/REPEAT structure is malformed
+     * @return the parsed BeginStatement, BeginUntilStatement, or BeginAgainStatement
+     * @throws SyntaxErrorException if BEGIN structure is malformed
      */
     private Statement parseBeginStatement() throws SyntaxErrorException {
         Token oBeginToken = getToken(0);
         int iBeginPosition = _iPosition;
         _iPosition++; // consume BEGIN
 
-        // Parse condition part until WHILE is found
-        List<Statement> aoCondition = parseBlockUntil(ForthTokenType.WHILE);
+        // Parse statements until WHILE, UNTIL, or AGAIN is found
+        List<Statement> aoBlock = parseBlockUntil(ForthTokenType.WHILE, ForthTokenType.UNTIL, ForthTokenType.AGAIN);
 
-        if (getToken(0).getType() != ForthTokenType.WHILE) {
-            throw new SyntaxErrorException("BEGIN without matching WHILE at token [" + iBeginPosition + "]");
+        ForthTokenType oTerminator = getToken(0).getType();
+
+        if (oTerminator == ForthTokenType.WHILE) {
+            // BEGIN ... WHILE ... REPEAT
+            // aoBlock is the condition part
+            List<Statement> aoCondition = aoBlock;
+            _iPosition++; // consume WHILE
+
+            // Parse body until REPEAT
+            List<Statement> aoBody = parseBlockUntil(ForthTokenType.REPEAT);
+
+            if (getToken(0).getType() != ForthTokenType.REPEAT) {
+                throw new SyntaxErrorException("WHILE without matching REPEAT at token [" + iBeginPosition + "]");
+            }
+            _iPosition++; // consume REPEAT
+
+            return new BeginStatement(oBeginToken, iBeginPosition, aoCondition, aoBody);
+
+        } else if (oTerminator == ForthTokenType.UNTIL) {
+            // BEGIN ... UNTIL
+            // aoBlock is the body part
+            _iPosition++; // consume UNTIL
+            return new BeginUntilStatement(oBeginToken, iBeginPosition, aoBlock);
+
+        } else if (oTerminator == ForthTokenType.AGAIN) {
+            // BEGIN ... AGAIN
+            // aoBlock is the body part
+            _iPosition++; // consume AGAIN
+            return new BeginAgainStatement(oBeginToken, iBeginPosition, aoBlock);
+
+        } else {
+            throw new SyntaxErrorException(
+                "BEGIN without matching WHILE, UNTIL, or AGAIN at token [" + iBeginPosition + "]"
+            );
         }
-        _iPosition++; // consume WHILE
-
-        // Parse body part until REPEAT is found
-        List<Statement> aoBody = parseBlockUntil(ForthTokenType.REPEAT);
-
-        if (getToken(0).getType() != ForthTokenType.REPEAT) {
-            throw new SyntaxErrorException("WHILE without matching REPEAT at token [" + iBeginPosition + "]");
-        }
-        _iPosition++; // consume REPEAT
-
-        return new BeginStatement(oBeginToken, iBeginPosition, aoCondition, aoBody);
     }
 
     /**

@@ -2,7 +2,121 @@
 
 All notable changes to the GD-FORTH project are documented in this file.
 
-**Last Updated:** 2026-10-04 15:40 UTC
+**Last Updated:** 2026-10-04 15:50 UTC
+
+---
+
+## [0.0.3++] - 2026-10-04 (UNTIL, AGAIN, LEAVE - Phase 2 Control Flow Complete)
+
+### Summary
+
+Completed Phase 2 control flow implementation with three additional loop constructs: BEGIN...UNTIL (do-while), BEGIN...AGAIN (infinite with LEAVE exit), and LEAVE (early loop exit). All three enable the remaining standard loop patterns for FORTH.
+
+### Added
+
+#### Additional Loop Constructs
+- ✅ **BeginUntilStatement.java** - Do-while loop
+  - Executes body at least once, then checks condition at end
+  - Exits when condition flag is true (non-zero)
+  - Syntax: `BEGIN body UNTIL`
+  - Stack behavior: condition part ( ... -- flag )
+
+- ✅ **BeginAgainStatement.java** - Infinite loop
+  - Loops forever executing body statements
+  - Only exits via LEAVE from enclosing DO or exception
+  - Syntax: `BEGIN body AGAIN`
+  - Useful for complex loop structures with multiple exit points
+
+- ✅ **LeaveStatement.java** - Early loop exit
+  - Exits nearest enclosing DO...LOOP
+  - Throws LeaveException (control-flow signal)
+  - Skips remaining body and LOOP/+LOOP statements
+  - Works only with DO...LOOP, not with BEGIN variants
+  - Stack behavior: ( -- )
+
+- ✅ **LeaveException.java** - Control-flow exception
+  - Signals LEAVE to enclosing DO...LOOP
+  - Stack trace suppressed (control-flow, not error)
+  - Propagates through nested structures
+
+#### Parser Integration
+- ✅ **ForthParser.java** enhancements
+  - Rewrote parseBeginStatement() to handle WHILE/UNTIL/AGAIN
+  - Dispatch on terminator token type
+  - Reuses parseBlockUntil() for condition/body collection
+  - Added `case LEAVE:` handler in parseOneStatement()
+
+- ✅ **DoStatement.java** enhancements
+  - Added try-catch for LeaveException inside loop
+  - LEAVE breaks loop immediately
+  - Existing finally still pops LoopContext exactly once
+
+#### Comprehensive Testing
+- ✅ **BeginUntilStatementTest.java** - 4 tests
+  - Runs at least once even if condition is true
+  - Multiple iterations until condition true
+  - Stack underflow handling
+  - FORTH TRUE (-1) semantics
+
+- ✅ **BeginAgainStatementTest.java** - 3 tests
+  - Infinite loop with exception exit
+  - LEAVE inside enclosing DO
+  - Nested AGAIN loops
+
+- ✅ **LeaveStatementTest.java** - 5 tests
+  - Outside loop error handling
+  - Inside DO loop exit
+  - Nested loops (inner-only exit)
+  - Inside IF inside DO
+  - Token number tracking
+
+- ✅ **begin-until-again-leave-tests.fs** - FORTH integration tests
+  - BEGIN...UNTIL countdown
+  - BEGIN...AGAIN with LEAVE from DO
+  - LEAVE in nested DO
+  - Multiple LEAVE conditions
+
+### Test Results
+- ✅ **12 new unit tests** passing (UNTIL, AGAIN, LEAVE)
+- ✅ **1867 total tests** (up from 1855)
+- ✅ **0 build warnings**, 0 errors
+- ✅ **BUILD SUCCESS**
+
+### Features Verified
+- ✅ Do-while loop semantics (body always executes once)
+- ✅ Infinite loops with LEAVE exit
+- ✅ LEAVE exits only innermost DO...LOOP
+- ✅ LEAVE skips remaining body and LOOP statements
+- ✅ Nested DO loops with LEAVE work correctly
+- ✅ LEAVE works inside IF and other control structures
+- ✅ Parser handles BEGIN...UNTIL, BEGIN...AGAIN, stray tokens
+
+### Phase 2 Status
+**COMPLETE (100%)** ✅
+- Phase 1: Stack/arithmetic/comparison (100%)
+- Phase 2: IF/THEN/ELSE, DO/LOOP, BEGIN/WHILE/REPEAT, BEGIN/UNTIL, BEGIN/AGAIN, LEAVE (100%)
+- Phase 3: Additional features (scheduled)
+
+### Example Usage
+```forth
+\ Do-while: UNTIL condition at bottom
+BEGIN x @ 1 + DUP x ! DUP 10 > UNTIL
+
+\ Infinite with conditional exit
+0 100 DO BEGIN I EMIT I 50 = IF LEAVE THEN AGAIN LOOP
+
+\ Multiple exit conditions
+0 50 DO
+  I 10 = IF LEAVE THEN
+  I 5 = IF CR THEN
+  I . SPACE
+LOOP
+```
+
+### Known Issue Flagged
+- UNLOOP + finally in DoStatement may cause double-pop (pre-existing)
+- Documented for future refactoring
+- Does not affect BEGIN variants (no LoopContext)
 
 ---
 

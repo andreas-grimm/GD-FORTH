@@ -1,6 +1,7 @@
 package eu.gricom.forth.statements.controlFlow;
 
 import eu.gricom.forth.error.InvalidLoopIndexException;
+import eu.gricom.forth.error.LeaveException;
 import eu.gricom.forth.memoryManager.Stack;
 import eu.gricom.forth.runtimeManager.LoopContext;
 import eu.gricom.forth.runtimeManager.ReturnStack;
@@ -113,9 +114,14 @@ public class DoStatement implements Statement {
         try {
             // Execute the loop body repeatedly until completion
             while (!oLoopContext.isComplete()) {
-                // Execute each statement in the loop body
-                for (Statement oStatement : _aoLoopBody) {
-                    oStatement.execute();
+                try {
+                    // Execute each statement in the loop body
+                    for (Statement oStatement : _aoLoopBody) {
+                        oStatement.execute();
+                    }
+                } catch (LeaveException e) {
+                    // LEAVE exits the loop immediately
+                    break;
                 }
             }
         } finally {

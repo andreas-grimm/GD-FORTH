@@ -1,8 +1,8 @@
 # GD-FORTH Implementation TO-DO List
 
 **Last Updated:** 2026-10-04  
-**Status:** 62 FORTH words implemented with comprehensive documentation (14.8% of 420+ standard words)  
-**Test Coverage:** 1855 unit tests, 100% passing ✓
+**Status:** 65 FORTH words implemented with comprehensive documentation (15.5% of 420+ standard words)  
+**Test Coverage:** 1867 unit tests, 100% passing ✓
 
 ---
 
@@ -97,16 +97,22 @@ This document maintains a comprehensive list of all FORTH reserved words and the
 
 ## Currently Implemented Words (62)
 
-**Control Flow (9 implemented):**
+**Control Flow (15 implemented):**
 - `IF` (IfStatement) [✓]
 - `THEN` (implicit with IF) [✓]
 - `ELSE` (implicit with IF) [✓]
 - `DO` (DoStatement) [✓]
 - `LOOP` (LoopStatement) [✓]
 - `+LOOP` (PlusLoopStatement) [✓]
-- `BEGIN` (BeginStatement) [✓] NEW
-- `WHILE` (parser marker) [✓] NEW
-- `REPEAT` (parser marker) [✓] NEW
+- `BEGIN` (BeginStatement) [✓]
+- `WHILE` (parser marker) [✓]
+- `REPEAT` (parser marker) [✓]
+- `UNTIL` (parser marker, BeginUntilStatement) [✓] NEW
+- `AGAIN` (parser marker, BeginAgainStatement) [✓] NEW
+- `LEAVE` (LeaveStatement) [✓] NEW
+- `I` (CurrentLoopIndexStatement) [✓]
+- `J` (OuterLoopIndexStatement) [✓]
+- `UNLOOP` (UnloopStatement) [✓]
 
 **Loop Index Access (2 implemented):**
 - `I` (CurrentLoopIndexStatement) [✓] NEW
